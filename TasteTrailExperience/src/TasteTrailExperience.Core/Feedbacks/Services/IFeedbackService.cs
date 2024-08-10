@@ -4,13 +4,13 @@ namespace TasteTrailExperience.Core.Feedbacks.Services;
 
 public interface IFeedbackService
 {
-    Task<IEnumerable<Feedback>> GetFeedbacksByCountAsync(int count);
+    Task<List<Feedback>> GetFeedbacksByCountAsync(int count);
 
-    Task<Feedback> GetFeedbackByIdAsync(int count);
+    Task<Feedback?> GetFeedbackByIdAsync(int id);
 
     Task<int> CreateFeedbackAsync(Feedback feedback);
 
-    Task<int> DeleteFeedbackByIdAsync(int id);
+    Task<int?> DeleteFeedbackByIdAsync(int id);
 
-    Task<int> UpdateFeedbackAsync(Feedback feedback);
+    Task<int?> UpdateFeedbackAsync(Feedback feedback);
 }

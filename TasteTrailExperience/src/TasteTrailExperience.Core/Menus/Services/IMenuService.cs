@@ -4,13 +4,13 @@ namespace TasteTrailExperience.Core.Menus.Services;
 
 public interface IMenuService
 {
-    Task<IEnumerable<Menu>> GetMenusByCountAsync(int count);
+    Task<List<Menu>> GetMenusByCountAsync(int count);
 
-    Task<Menu> GetMenuByIdAsync(int id);
+    Task<Menu?> GetMenuByIdAsync(int id);
 
-    Task<int> CreateMenuAsync(Menu entity);
+    Task<int> CreateMenuAsync(Menu menu);
 
-    Task<int> DeleteMenuByIdAsync(int id);
+    Task<int?> DeleteMenuByIdAsync(int id);
     
-    Task<int> PutMenuAsync(Menu entity);
+    Task<int?> PutMenuAsync(Menu menu);
 }

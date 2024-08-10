@@ -1,19 +1,20 @@
 using Microsoft.AspNetCore.Http;
 using TasteTrailData.Core.Venues.Models;
+using TasteTrailExperience.Core.Venues.Dtos;
 
 namespace TasteTrailExperience.Core.Venues.Services;
 
 public interface IVenueService
 {
-    Task<IEnumerable<Venue>> GetVenuesByCountAsync(int count);
+    Task<List<VenueGetDto>> GetVenuesByCountAsync(int count);
 
-    Task<Venue> GetVenueByIdAsync(int id);
+    Task<VenueGetDto?> GetVenueByIdAsync(int id);
 
-    Task<int> CreateVenueAsync(Venue venue, IFormFile? logo);
+    Task<int> CreateVenueAsync(VenueCreateDto venue);
 
-    Task<int> DeleteVenueByIdAsync(int id);
+    Task<int?> DeleteVenueByIdAsync(int id);
     
-    Task<int> PutVenueAsync(Venue entity);
+    Task<int?> PutVenueAsync(VenueUpdateDto venue);
 
     Task<string> SetVenueLogo(Venue venue, IFormFile? logo);
 
