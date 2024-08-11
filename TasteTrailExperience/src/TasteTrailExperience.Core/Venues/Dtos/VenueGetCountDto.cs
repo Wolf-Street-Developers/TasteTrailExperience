@@ -1,9 +1,6 @@
-using TasteTrailData.Core.Feedbacks.Models;
-using TasteTrailData.Core.Menus.Models;
-
 namespace TasteTrailExperience.Core.Venues.Dtos;
 
-public class VenueGetDto
+public class VenueGetCountDto
 {
     public required int Id { get; set; }
 
@@ -20,8 +17,4 @@ public class VenueGetDto
     public float AveragePrice { get; set; }
 
     public float OverallRating { get; set; }
-
-    public required ICollection<Menu>? Menus { get; set; }
-
-    public required ICollection<Feedback>? Feedbacks { get; set; }
 }

@@ -1,16 +1,17 @@
 using TasteTrailData.Core.Menus.Models;
+using TasteTrailExperience.Core.Menus.Dtos;
 
 namespace TasteTrailExperience.Core.Menus.Services;
 
 public interface IMenuService
 {
-    Task<List<Menu>> GetMenusByCountAsync(int count);
+    Task<List<MenuGetCountDto>> GetMenusByCountAsync(int count);
 
-    Task<Menu?> GetMenuByIdAsync(int id);
+    Task<MenuGetByIdDto?> GetMenuByIdAsync(int id);
 
-    Task<int> CreateMenuAsync(Menu menu);
+    Task<int> CreateMenuAsync(MenuCreateDto menu);
 
     Task<int?> DeleteMenuByIdAsync(int id);
     
-    Task<int?> PutMenuAsync(Menu menu);
+    Task<int?> PutMenuAsync(MenuUpdateDto menu);
 }

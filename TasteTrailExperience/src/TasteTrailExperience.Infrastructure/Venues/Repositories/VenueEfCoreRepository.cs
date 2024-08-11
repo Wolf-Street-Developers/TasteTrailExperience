@@ -16,12 +16,19 @@ public class VenueEfCoreRepository : IVenueRepository
 
     public async Task<List<Venue>> GetByCountAsync(int count)
     {
-        return await _dbContext.Venues.Take(count).ToListAsync();
+        return await _dbContext.Venues
+            .Include(v => v.Menus)
+            .Include(v => v.Feedbacks)
+            .Take(count)
+            .ToListAsync();
     }
 
     public async Task<Venue?> GetByIdAsync(int id)
     {
-        return await _dbContext.Venues.Include(m => m.Menus).Include(f => f.Feedbacks).FirstOrDefaultAsync(v => v.Id == id);
+        return await _dbContext.Venues
+            .Include(v => v.Menus)
+            .Include(v => v.Feedbacks)
+            .FirstOrDefaultAsync(v => v.Id == id);
     }
 
     public async Task<int> CreateAsync(Venue venue)
@@ -51,9 +58,16 @@ public class VenueEfCoreRepository : IVenueRepository
     {
         ArgumentNullException.ThrowIfNull(venue);
 
+        var venueToUpdate = await _dbContext.Venues
+            .AsNoTracking()
+            .FirstOrDefaultAsync(v => v.Id == venue.Id);
+
+        if (venueToUpdate is null)
+            return null;
+
         _dbContext.Venues.Update(venue);
         await _dbContext.SaveChangesAsync();
 
-        return venue.Id;
+        return venueToUpdate.Id;
     }
 }

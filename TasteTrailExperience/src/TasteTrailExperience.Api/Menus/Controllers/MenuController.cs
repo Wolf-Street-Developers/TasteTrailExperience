@@ -1,20 +1,19 @@
 using Microsoft.AspNetCore.Mvc;
-using TasteTrailData.Core.Venues.Models;
 using TasteTrailExperience.Api.Common.Extensions.Controller;
-using TasteTrailExperience.Core.Venues.Dtos;
-using TasteTrailExperience.Core.Venues.Services;
+using TasteTrailExperience.Core.Menus.Dtos;
+using TasteTrailExperience.Core.Menus.Services;
 
-namespace TasteTrailExperience.Api.Venues.Controllers;
+namespace TasteTrailExperience.Api.Menus.Controllers;
 
 [ApiController]
 [Route("api/[controller]/[action]")]
-public class VenueController : Controller
+public class MenuController : ControllerBase
 {
-    private readonly IVenueService _venueService;
+    private readonly IMenuService _menuService;
 
-    public VenueController(IVenueService venueService)
+    public MenuController(IMenuService menuService)
     {
-        _venueService = venueService;
+        _menuService = menuService;
     }
 
     [HttpGet]
@@ -22,9 +21,9 @@ public class VenueController : Controller
     {
         try 
         {
-            var venues = await _venueService.GetVenuesByCountAsync(count);
+            var menus = await _menuService.GetMenusByCountAsync(count);
 
-            return Ok(venues);
+            return Ok(menus);
         }
         catch (Exception ex)
         {
@@ -37,12 +36,12 @@ public class VenueController : Controller
     {
         try
         {
-             var venue = await _venueService.GetVenueByIdAsync(id);
+             var menu = await _menuService.GetMenuByIdAsync(id);
 
-            if (venue is null)
+            if (menu is null)
                 return NotFound(id);
 
-            return Ok(venue);
+            return Ok(menu);
         }
         catch (Exception ex)
         {
@@ -51,13 +50,13 @@ public class VenueController : Controller
     }
 
     [HttpPost]
-    public async Task<IActionResult> CreateAsync(VenueCreateDto venue)
+    public async Task<IActionResult> CreateAsync(MenuCreateDto menu)
     {
         try
         {
-            var venueId = await _venueService.CreateVenueAsync(venue);
+            var menuId = await _menuService.CreateMenuAsync(menu);
 
-            return Ok(venueId);
+            return Ok(menuId);
         }
         catch (ArgumentException ex)
         {
@@ -74,12 +73,12 @@ public class VenueController : Controller
     {
         try
         {
-            var venueId = await _venueService.DeleteVenueByIdAsync(id);
+            var menuId = await _menuService.DeleteMenuByIdAsync(id);
 
-            if (venueId is null)
-                return NotFound(venueId);
+            if (menuId is null)
+                return NotFound(menuId);
 
-            return Ok(venueId);
+            return Ok(menuId);
         }
         catch (Exception ex)
         {
@@ -88,16 +87,16 @@ public class VenueController : Controller
     }
 
     [HttpPut]
-    public async Task<IActionResult> UpdateAsync(VenueUpdateDto venue)
+    public async Task<IActionResult> UpdateAsync(MenuUpdateDto venue)
     {
         try
         {
-            var venueId = await _venueService.PutVenueAsync(venue);
+            var menuId = await _menuService.PutMenuAsync(venue);
 
-            if (venueId is null)
-                return NotFound(venueId);
+            if (menuId is null)
+                return NotFound(menuId);
 
-            return Ok(venueId);
+            return Ok(menuId);
         }
         catch (ArgumentException ex)
         {
