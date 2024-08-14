@@ -1,6 +1,8 @@
+using TasteTrailData.Core.Menus.Models;
+
 namespace TasteTrailExperience.Core.Menus.Dtos;
 
-public class MenuGetCountDto
+public class MenuGetByCountDto
 {
     public int Id { get; set; }
 

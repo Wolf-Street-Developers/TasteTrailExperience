@@ -17,8 +17,6 @@ public class VenueEfCoreRepository : IVenueRepository
     public async Task<List<Venue>> GetByCountAsync(int count)
     {
         return await _dbContext.Venues
-            .Include(v => v.Menus)
-            .Include(v => v.Feedbacks)
             .Take(count)
             .ToListAsync();
     }
@@ -41,7 +39,7 @@ public class VenueEfCoreRepository : IVenueRepository
         return venue.Id;
     }
 
-    public async Task<int?> DeleteByIdAsync(int? id)
+    public async Task<int?> DeleteByIdAsync(int id)
     {
         var venue = await _dbContext.Venues.FindAsync(id);
 

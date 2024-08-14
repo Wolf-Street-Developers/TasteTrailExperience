@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Identity;
+using TasteTrailData.Core.Users.Models;
 using TasteTrailData.Core.Venues.Models;
-using TasteTrailExperience.Core.Menus.Dtos;
 using TasteTrailExperience.Core.Venues.Dtos;
 using TasteTrailExperience.Core.Venues.Repositories;
 using TasteTrailExperience.Core.Venues.Services;
@@ -16,59 +17,21 @@ public class VenueService : IVenueService
         _venueRepository = venueRepository;
     }
 
-    public async Task<List<VenueGetCountDto>> GetVenuesByCountAsync(int count)
+    public async Task<List<Venue>> GetVenuesByCountAsync(int count)
     {
         var venues = await _venueRepository.GetByCountAsync(count);
 
-        var venueDtos = venues.Select(venue => new VenueGetCountDto
-        {
-            Id = venue.Id,
-            Name = venue.Name,
-            Address = venue.Address,
-            Description = venue.Description,
-            Email = venue.Email,
-            ContactNumber = venue.ContactNumber,
-            AveragePrice = venue.AveragePrice,
-            OverallRating = venue.OverallRating,
-        }).ToList();
-
-        return venueDtos;
+        return venues;
     }
 
-    public async Task<VenueGetByIdDto?> GetVenueByIdAsync(int id)
+    public async Task<Venue?> GetVenueByIdAsync(int id)
     {
         var venue = await _venueRepository.GetByIdAsync(id);
 
-        if (venue is null)
-            return null;
-
-        var venueDto = new VenueGetByIdDto() 
-        {
-            Id = venue.Id,
-            Name = venue.Name,
-            Address = venue.Address,
-            Description = venue.Description,
-            Email = venue.Email,
-            ContactNumber = venue.ContactNumber,
-            AveragePrice = venue.AveragePrice,
-            OverallRating = venue.OverallRating,
-
-            Menus = venue.Menus.Select(m => 
-                new MenuGetCountDto { 
-                    Id = m.Id,
-                    Name = m.Name,
-                    Description = m.Description,
-                    VenueId = m.VenueId,
-                }
-            ).ToList(),
-
-            Feedbacks = venue.Feedbacks
-        };
-
-        return venueDto;
+        return venue;
     }
 
-    public async Task<int> CreateVenueAsync(VenueCreateDto venue)
+    public async Task<int> CreateVenueAsync(VenueCreateDto venue, User user)
     {
         var newVenue = new Venue() {
             Name = venue.Name,
@@ -76,7 +39,8 @@ public class VenueService : IVenueService
             Description = venue.Description,
             Email = venue.Email,
             ContactNumber = venue.ContactNumber,
-            AveragePrice = venue.AveragePrice
+            AveragePrice = venue.AveragePrice,
+            UserId = user.Id
         };
 
         var venueId = await _venueRepository.CreateAsync(newVenue);
@@ -91,7 +55,7 @@ public class VenueService : IVenueService
         return venueId;
     }
 
-    public async Task<int?> PutVenueAsync(VenueUpdateDto venue)
+    public async Task<int?> PutVenueAsync(VenueUpdateDto venue, User user)
     {
         var updatedVenue = new Venue() {
             Id = venue.Id,
@@ -100,7 +64,8 @@ public class VenueService : IVenueService
             Description = venue.Description,
             Email = venue.Email,
             ContactNumber = venue.ContactNumber,
-            AveragePrice = venue.AveragePrice
+            AveragePrice = venue.AveragePrice,
+            UserId = user.Id
         };
 
         var venueId = await _venueRepository.PutAsync(updatedVenue);

@@ -5,9 +5,9 @@ namespace TasteTrailExperience.Core.Menus.Services;
 
 public interface IMenuService
 {
-    Task<List<MenuGetCountDto>> GetMenusByCountAsync(int count);
+    Task<List<MenuGetByCountDto>> GetMenusByCountAsync(int count);
 
-    Task<MenuGetByIdDto?> GetMenuByIdAsync(int id);
+    Task<Menu?> GetMenuByIdAsync(int id);
 
     Task<int> CreateMenuAsync(MenuCreateDto menu);
 

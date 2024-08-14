@@ -1,19 +1,19 @@
 using Microsoft.AspNetCore.Mvc;
 using TasteTrailData.Api.Common.Extensions.Controllers;
-using TasteTrailExperience.Core.Menus.Dtos;
-using TasteTrailExperience.Core.Menus.Services;
+using TasteTrailExperience.Core.MenuItems.Dtos;
+using TasteTrailExperience.Core.MenuItems.Services;
 
-namespace TasteTrailExperience.Api.Menus.Controllers;
+namespace TasteTrailExperience.Api.MenuItem.Controllers;
 
 [ApiController]
 [Route("api/[controller]/[action]")]
-public class MenuController : ControllerBase
+public class MenuItemController : ControllerBase
 {
-    private readonly IMenuService _menuService;
+    private readonly IMenuItemService _menuItemService;
 
-    public MenuController(IMenuService menuService)
+    public MenuItemController(IMenuItemService menuItemService)
     {
-        _menuService = menuService;
+        _menuItemService = menuItemService;
     }
 
     [HttpGet]
@@ -21,9 +21,9 @@ public class MenuController : ControllerBase
     {
         try 
         {
-            var menus = await _menuService.GetMenusByCountAsync(count);
+            var menuItems = await _menuItemService.GetMenuItemsByCountAsync(count);
 
-            return Ok(menus);
+            return Ok(menuItems);
         }
         catch (Exception ex)
         {
@@ -36,12 +36,12 @@ public class MenuController : ControllerBase
     {
         try
         {
-             var menu = await _menuService.GetMenuByIdAsync(id);
+             var menuItem = await _menuItemService.GetMenuItemByIdAsync(id);
 
-            if (menu is null)
+            if (menuItem is null)
                 return NotFound(id);
 
-            return Ok(menu);
+            return Ok(menuItem);
         }
         catch (Exception ex)
         {
@@ -50,13 +50,13 @@ public class MenuController : ControllerBase
     }
 
     [HttpPost]
-    public async Task<IActionResult> CreateAsync(MenuCreateDto menu)
+    public async Task<IActionResult> CreateAsync(MenuItemCreateDto menu)
     {
         try
         {
-            var menuId = await _menuService.CreateMenuAsync(menu);
+            var menuItemId = await _menuItemService.CreateMenuItemAsync(menu);
 
-            return Ok(menuId);
+            return Ok(menuItemId);
         }
         catch (ArgumentException ex)
         {
@@ -73,12 +73,12 @@ public class MenuController : ControllerBase
     {
         try
         {
-            var menuId = await _menuService.DeleteMenuByIdAsync(id);
+            var menuItemId = await _menuItemService.DeleteMenuItemByIdAsync(id);
 
-            if (menuId is null)
-                return NotFound(menuId);
+            if (menuItemId is null)
+                return NotFound(menuItemId);
 
-            return Ok(menuId);
+            return Ok(menuItemId);
         }
         catch (Exception ex)
         {
@@ -87,16 +87,16 @@ public class MenuController : ControllerBase
     }
 
     [HttpPut]
-    public async Task<IActionResult> UpdateAsync(MenuUpdateDto venue)
+    public async Task<IActionResult> UpdateAsync(MenuItemUpdateDto venue)
     {
         try
         {
-            var menuId = await _menuService.PutMenuAsync(venue);
+            var menuItemId = await _menuItemService.PutMenuItemAsync(venue);
 
-            if (menuId is null)
-                return NotFound(menuId);
+            if (menuItemId is null)
+                return NotFound(menuItemId);
 
-            return Ok(menuId);
+            return Ok(menuItemId);
         }
         catch (ArgumentException ex)
         {

@@ -1,3 +1,6 @@
+
+
+using TasteTrailData.Api.Common.Extensions.ServiceCollection;
 using TasteTrailExperience.Api.Common.Extensions.ServiceCollection;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -6,6 +9,8 @@ var builder = WebApplication.CreateBuilder(args);
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 
 builder.Services.InitAspnetIdentity(builder.Configuration);
+builder.Services.InitAuth(builder.Configuration);
+builder.Services.InitSwagger();
 builder.Services.InitCors();
 builder.Services.RegisterDpInjection();
 builder.Services.AddValidators();

@@ -16,12 +16,16 @@ public class MenuEfCoreRepository : IMenuRepository
 
     public async Task<List<Menu>> GetByCountAsync(int count)
     {
-        return await _dbContext.Menus.Take(count).ToListAsync();
+        return await _dbContext.Menus
+            .Take(count)
+            .ToListAsync();
     }
 
     public async Task<Menu?> GetByIdAsync(int id)
     {
-        return await _dbContext.Menus.Include(m => m.MenuItems).FirstOrDefaultAsync(m => m.Id == id);
+        return await _dbContext.Menus
+            .Include(m => m.MenuItems)
+            .FirstOrDefaultAsync(m => m.Id == id);
     }
 
     public async Task<int> CreateAsync(Menu menu)
@@ -37,7 +41,7 @@ public class MenuEfCoreRepository : IMenuRepository
         return menu.Id;
     }
 
-    public async Task<int?> DeleteByIdAsync(int? id)
+    public async Task<int?> DeleteByIdAsync(int id)
     {
         var menu = await _dbContext.Menus.FindAsync(id);
 
@@ -67,6 +71,6 @@ public class MenuEfCoreRepository : IMenuRepository
         _dbContext.Menus.Update(menu);
         await _dbContext.SaveChangesAsync();
 
-        return menuToUpdate.Id;
+        return menu.Id;
     }
 }

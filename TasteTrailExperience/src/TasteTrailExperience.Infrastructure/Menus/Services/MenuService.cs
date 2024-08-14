@@ -2,6 +2,7 @@ using TasteTrailData.Core.Menus.Models;
 using TasteTrailExperience.Core.Menus.Dtos;
 using TasteTrailExperience.Core.Menus.Repositories;
 using TasteTrailExperience.Core.Menus.Services;
+using TasteTrailExperience.Core.Venues.Repositories;
 
 namespace TasteTrailExperience.Infrastructure.Menus.Services;
 
@@ -14,11 +15,11 @@ public class MenuService : IMenuService
         _menuRepository = menuRepository;
     }
 
-    public async Task<List<MenuGetCountDto>> GetMenusByCountAsync(int count)
+    public async Task<List<MenuGetByCountDto>> GetMenusByCountAsync(int count)
     {
         var menus = await _menuRepository.GetByCountAsync(count);
 
-        var menuDtos = menus.Select(menu => new MenuGetCountDto
+        var menuDtos = menus.Select(menu => new MenuGetByCountDto
         {
             Id = menu.Id,
             Name = menu.Name,
@@ -29,23 +30,11 @@ public class MenuService : IMenuService
         return menuDtos;
     }
 
-    public async Task<MenuGetByIdDto?> GetMenuByIdAsync(int id)
+    public async Task<Menu?> GetMenuByIdAsync(int id)
     {
         var menu = await _menuRepository.GetByIdAsync(id);
 
-        if (menu is null)
-            return null;
-
-        var menuDto = new MenuGetByIdDto() 
-        {
-            Id = menu.Id,
-            Name = menu.Name,
-            Description = menu.Description,
-            VenueId = menu.VenueId,
-            MenuItems = menu.MenuItems
-        };
-
-        return menuDto;
+        return menu;
     }
 
     public async Task<int> CreateMenuAsync(MenuCreateDto menu)
@@ -70,6 +59,7 @@ public class MenuService : IMenuService
 
     public async Task<int?> PutMenuAsync(MenuUpdateDto menu)
     {
+
         var updatedMenu = new Menu() {
             Id = menu.Id,
             Name = menu.Name,

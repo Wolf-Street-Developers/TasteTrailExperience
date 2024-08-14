@@ -1,6 +1,9 @@
+using System.Security.Claims;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using TasteTrailData.Core.Venues.Models;
-using TasteTrailExperience.Api.Common.Extensions.Controller;
+using TasteTrailData.Api.Common.Extensions.Controllers;
+using TasteTrailData.Core.Users.Models;
 using TasteTrailExperience.Core.Venues.Dtos;
 using TasteTrailExperience.Core.Venues.Services;
 
@@ -12,9 +15,12 @@ public class VenueController : Controller
 {
     private readonly IVenueService _venueService;
 
-    public VenueController(IVenueService venueService)
+    private readonly UserManager<User> _userManager;
+
+    public VenueController(IVenueService venueService, UserManager<User> userManager)
     {
         _venueService = venueService;
+        _userManager = userManager;
     }
 
     [HttpGet]
@@ -51,11 +57,13 @@ public class VenueController : Controller
     }
 
     [HttpPost]
+    [Authorize]
     public async Task<IActionResult> CreateAsync(VenueCreateDto venue)
     {
         try
         {
-            var venueId = await _venueService.CreateVenueAsync(venue);
+            var user = await _userManager.GetUserAsync(User);
+            var venueId = await _venueService.CreateVenueAsync(venue, user!);
 
             return Ok(venueId);
         }
@@ -88,11 +96,13 @@ public class VenueController : Controller
     }
 
     [HttpPut]
+    [Authorize]
     public async Task<IActionResult> UpdateAsync(VenueUpdateDto venue)
     {
         try
         {
-            var venueId = await _venueService.PutVenueAsync(venue);
+            var user = await _userManager.GetUserAsync(User);
+            var venueId = await _venueService.PutVenueAsync(venue, user!);
 
             if (venueId is null)
                 return NotFound(venueId);
