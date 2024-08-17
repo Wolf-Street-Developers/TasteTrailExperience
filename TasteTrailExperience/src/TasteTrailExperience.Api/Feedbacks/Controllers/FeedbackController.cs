@@ -1,26 +1,24 @@
-using System.Security.Claims;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using TasteTrailData.Api.Common.Extensions.Controllers;
 using TasteTrailData.Core.Users.Models;
-using TasteTrailData.Core.Venues.Models;
-using TasteTrailExperience.Core.Venues.Dtos;
-using TasteTrailExperience.Core.Venues.Services;
+using TasteTrailExperience.Core.Feedbacks.Dtos;
+using TasteTrailExperience.Core.Feedbacks.Services;
 
-namespace TasteTrailExperience.Api.Venues.Controllers;
+namespace TasteTrailExperience.Api.Feedbacks.Controllers;
 
 [ApiController]
 [Route("api/[controller]/[action]")]
-public class VenueController : Controller
+public class FeedbackController : ControllerBase
 {
-    private readonly IVenueService _venueService;
+    private readonly IFeedbackService _feedbackService;
 
     private readonly UserManager<User> _userManager;
 
-    public VenueController(IVenueService venueService, UserManager<User> userManager)
+    public FeedbackController(IFeedbackService feedbackService, UserManager<User> userManager)
     {
-        _venueService = venueService;
+        _feedbackService = feedbackService;
         _userManager = userManager;
     }
 
@@ -29,9 +27,9 @@ public class VenueController : Controller
     {
         try 
         {
-            var venues = await _venueService.GetVenuesByCountAsync(count);
+            var feedbacks = await _feedbackService.GetFeedbacksByCountAsync(count);
 
-            return Ok(venues);
+            return Ok(feedbacks);
         }
         catch (Exception ex)
         {
@@ -44,12 +42,12 @@ public class VenueController : Controller
     {
         try
         {
-             var venue = await _venueService.GetVenueByIdAsync(id);
+             var feedback = await _feedbackService.GetFeedbackByIdAsync(id);
 
-            if (venue is null)
+            if (feedback is null)
                 return NotFound(id);
 
-            return Ok(venue);
+            return Ok(feedback);
         }
         catch (Exception ex)
         {
@@ -59,14 +57,14 @@ public class VenueController : Controller
 
     [HttpPost]
     [Authorize]
-    public async Task<IActionResult> CreateAsync(VenueCreateDto venue)
+    public async Task<IActionResult> CreateAsync(FeedbackCreateDto feedback)
     {
         try
         {
             var user = await _userManager.GetUserAsync(User);
-            var venueId = await _venueService.CreateVenueAsync(venue, user!);
+            var feedbackId = await _feedbackService.CreateFeedbackAsync(feedback, user!);
 
-            return Ok(venueId);
+            return Ok(feedbackId);
         }
         catch (ArgumentException ex)
         {
@@ -84,12 +82,12 @@ public class VenueController : Controller
     {
         try
         {
-            var venueId = await _venueService.DeleteVenueByIdAsync(id);
+            var feedbackId = await _feedbackService.DeleteFeedbackByIdAsync(id);
 
-            if (venueId is null)
-                return NotFound(venueId);
+            if (feedbackId is null)
+                return NotFound(feedbackId);
 
-            return Ok(venueId);
+            return Ok(feedbackId);
         }
         catch (Exception ex)
         {
@@ -99,17 +97,17 @@ public class VenueController : Controller
 
     [HttpPut]
     [Authorize]
-    public async Task<IActionResult> UpdateAsync(VenueUpdateDto venue)
+    public async Task<IActionResult> UpdateAsync(FeedbackUpdateDto feedback)
     {
         try
         {
             var user = await _userManager.GetUserAsync(User);
-            var venueId = await _venueService.PutVenueAsync(venue, user!);
+            var feedbackId = await _feedbackService.UpdateFeedbackAsync(feedback, user!);
 
-            if (venueId is null)
-                return NotFound(venueId);
+            if (feedbackId is null)
+                return NotFound(feedbackId);
 
-            return Ok(venueId);
+            return Ok(feedbackId);
         }
         catch (ArgumentException ex)
         {
@@ -120,4 +118,5 @@ public class VenueController : Controller
             return this.InternalServerError(ex.Message);
         }
     }
+
 }

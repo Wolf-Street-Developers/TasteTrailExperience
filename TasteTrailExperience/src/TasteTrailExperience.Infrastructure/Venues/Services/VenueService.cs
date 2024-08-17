@@ -17,11 +17,25 @@ public class VenueService : IVenueService
         _venueRepository = venueRepository;
     }
 
-    public async Task<List<Venue>> GetVenuesByCountAsync(int count)
+    public async Task<List<VenueGetByCountDto>> GetVenuesByCountAsync(int count)
     {
         var venues = await _venueRepository.GetByCountAsync(count);
 
-        return venues;
+        var venueDtos = venues.Select(venue => new VenueGetByCountDto
+        {
+            Id = venue.Id,
+            Name = venue.Name,
+            Address = venue.Address,
+            Description = venue.Description,
+            Email = venue.Email,
+            ContactNumber = venue.ContactNumber,
+            AveragePrice = venue.AveragePrice,
+            OverallRating = venue.OverallRating,
+            UserId = venue.UserId
+        }).ToList();
+
+
+        return venueDtos;
     }
 
     public async Task<Venue?> GetVenueByIdAsync(int id)

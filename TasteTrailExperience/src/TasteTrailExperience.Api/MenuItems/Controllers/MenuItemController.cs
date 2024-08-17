@@ -1,9 +1,12 @@
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using TasteTrailData.Api.Common.Extensions.Controllers;
+using TasteTrailData.Core.Users.Models;
 using TasteTrailExperience.Core.MenuItems.Dtos;
 using TasteTrailExperience.Core.MenuItems.Services;
 
-namespace TasteTrailExperience.Api.MenuItem.Controllers;
+namespace TasteTrailExperience.Api.MenuItems.Controllers;
 
 [ApiController]
 [Route("api/[controller]/[action]")]
@@ -50,6 +53,7 @@ public class MenuItemController : ControllerBase
     }
 
     [HttpPost]
+    [Authorize]
     public async Task<IActionResult> CreateAsync(MenuItemCreateDto menu)
     {
         try
@@ -69,6 +73,7 @@ public class MenuItemController : ControllerBase
     }
 
     [HttpDelete]
+    [Authorize]
     public async Task<IActionResult> DeleteByIdAsync(int id)
     {
         try
@@ -87,6 +92,7 @@ public class MenuItemController : ControllerBase
     }
 
     [HttpPut]
+    [Authorize]
     public async Task<IActionResult> UpdateAsync(MenuItemUpdateDto venue)
     {
         try

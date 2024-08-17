@@ -1,9 +1,13 @@
+using TasteTrailExperience.Core.Feedbacks.Repositories;
+using TasteTrailExperience.Core.Feedbacks.Services;
 using TasteTrailExperience.Core.MenuItems.Repositories;
 using TasteTrailExperience.Core.MenuItems.Services;
 using TasteTrailExperience.Core.Menus.Repositories;
 using TasteTrailExperience.Core.Menus.Services;
 using TasteTrailExperience.Core.Venues.Repositories;
 using TasteTrailExperience.Core.Venues.Services;
+using TasteTrailExperience.Infrastructure.Feedbacks.Repositories;
+using TasteTrailExperience.Infrastructure.Feedbacks.Services;
 using TasteTrailExperience.Infrastructure.MenuItems.Repositories;
 using TasteTrailExperience.Infrastructure.MenuItems.Services;
 using TasteTrailExperience.Infrastructure.Menus.Repositories;
@@ -20,9 +24,11 @@ public static class RegisterDependencyInjectionMethod
         serviceCollection.AddTransient<IVenueRepository, VenueEfCoreRepository>();
         serviceCollection.AddTransient<IMenuRepository, MenuEfCoreRepository>();
         serviceCollection.AddTransient<IMenuItemRepository, MenuItemEfCoreRepository>();
+        serviceCollection.AddTransient<IFeedbackRepository, FeedbackEfCoreRepository>();
 
         serviceCollection.AddTransient<IVenueService, VenueService>();
         serviceCollection.AddTransient<IMenuService, MenuService>();
         serviceCollection.AddTransient<IMenuItemService, MenuItemService>();
+        serviceCollection.AddTransient<IFeedbackService, FeedbackService>();
     } 
 }
