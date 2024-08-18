@@ -12,7 +12,7 @@ public interface IFeedbackService
 
     Task<int> CreateFeedbackAsync(FeedbackCreateDto feedback, User user);
 
-    Task<int?> DeleteFeedbackByIdAsync(int id);
+    Task<int?> DeleteFeedbackByIdAsync(int id, User user);
 
     Task<int?> UpdateFeedbackAsync(FeedbackUpdateDto feedback, User user);
 }

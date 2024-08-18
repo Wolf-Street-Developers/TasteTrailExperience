@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using TasteTrailData.Api.Common.Extensions.Controllers;
 using TasteTrailData.Core.Users.Models;
+using TasteTrailExperience.Core.Common.Exceptions;
 using TasteTrailExperience.Core.Feedbacks.Dtos;
 using TasteTrailExperience.Core.Feedbacks.Services;
 
@@ -82,12 +83,17 @@ public class FeedbackController : ControllerBase
     {
         try
         {
-            var feedbackId = await _feedbackService.DeleteFeedbackByIdAsync(id);
+            var user = await _userManager.GetUserAsync(User);
+            var feedbackId = await _feedbackService.DeleteFeedbackByIdAsync(id, user!);
 
             if (feedbackId is null)
                 return NotFound(feedbackId);
 
             return Ok(feedbackId);
+        }
+        catch (ForbiddenAccessException)
+        {
+            return Forbid();
         }
         catch (Exception ex)
         {
@@ -112,6 +118,10 @@ public class FeedbackController : ControllerBase
         catch (ArgumentException ex)
         {
             return BadRequest(ex.Message);
+        }
+        catch (ForbiddenAccessException)
+        {
+            return Forbid();
         }
         catch (Exception ex)
         {

@@ -1,6 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using TasteTrailData.Core.Feedbacks.Models;
 using TasteTrailData.Infrastructure.Common.Data;
+using TasteTrailExperience.Core.Common.Exceptions;
 using TasteTrailExperience.Core.Feedbacks.Repositories;
 
 namespace TasteTrailExperience.Infrastructure.Feedbacks.Repositories;
@@ -31,9 +32,6 @@ public class FeedbackEfCoreRepository : IFeedbackRepository
     {
         ArgumentNullException.ThrowIfNull(feedback);
 
-        var venue = await _dbContext.Venues.FirstOrDefaultAsync(v => v.Id == feedback.VenueId) ?? 
-            throw new ArgumentException($"Venue by ID: {feedback.VenueId} not found.");
-
         await _dbContext.Feedbacks.AddAsync(feedback);
         await _dbContext.SaveChangesAsync();
 
@@ -55,21 +53,26 @@ public class FeedbackEfCoreRepository : IFeedbackRepository
 
     public async Task<int?> PutAsync(Feedback feedback)
     {
-        ArgumentNullException.ThrowIfNull(feedback);
-
         var feedbackToUpdate = await _dbContext.Feedbacks
-            .AsNoTracking()
             .FirstOrDefaultAsync(f => f.Id == feedback.Id);
 
-        if (feedbackToUpdate is null)
+        if (feedbackToUpdate == null)
             return null;
 
-        var venue = await _dbContext.Venues.FirstOrDefaultAsync(v => v.Id == feedback.VenueId) ?? 
-            throw new ArgumentException($"Venue by ID: {feedback.VenueId} not found.");
+        feedbackToUpdate.Text = feedback.Text;
+        feedbackToUpdate.Rating = feedback.Rating;
+        feedbackToUpdate.CreationDate = feedback.CreationDate;
+        feedbackToUpdate.UserId = feedback.UserId;
 
-        _dbContext.Feedbacks.Update(feedback);
         await _dbContext.SaveChangesAsync();
 
         return feedback.Id;
+    }
+
+    public async Task<Feedback?> GetAsNoTrackingAsync(int id)
+    {
+        return await _dbContext.Feedbacks
+            .AsNoTracking()
+            .FirstOrDefaultAsync(f => f.Id == id);
     }
 }
