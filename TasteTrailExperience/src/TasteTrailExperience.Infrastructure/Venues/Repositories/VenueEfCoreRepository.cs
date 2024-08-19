@@ -14,18 +14,17 @@ public class VenueEfCoreRepository : IVenueRepository
         _dbContext = dbContext ?? throw new ArgumentNullException(nameof(dbContext));
     }
 
-    public async Task<List<Venue>> GetByCountAsync(int count)
+    public async Task<List<Venue>> GetFromToAsync(int from, int to)
     {
         return await _dbContext.Venues
-            .Take(count)
+            .Skip(from - 1)
+            .Take(to - from + 1)
             .ToListAsync();
     }
 
     public async Task<Venue?> GetByIdAsync(int id)
     {
         return await _dbContext.Venues
-            .Include(v => v.Menus)
-            .Include(v => v.Feedbacks)
             .FirstOrDefaultAsync(v => v.Id == id);
     }
 
@@ -57,15 +56,27 @@ public class VenueEfCoreRepository : IVenueRepository
         ArgumentNullException.ThrowIfNull(venue);
 
         var venueToUpdate = await _dbContext.Venues
-            .AsNoTracking()
             .FirstOrDefaultAsync(v => v.Id == venue.Id);
 
         if (venueToUpdate is null)
             return null;
 
-        _dbContext.Venues.Update(venue);
+        venueToUpdate.Name = venue.Name;
+        venueToUpdate.Address = venue.Address;
+        venueToUpdate.ContactNumber = venue.ContactNumber;
+        venueToUpdate.Email = venue.Email;
+        venueToUpdate.LogoUrlPath = venue.LogoUrlPath;
+        venueToUpdate.AveragePrice = venue.AveragePrice;
+
         await _dbContext.SaveChangesAsync();
 
         return venueToUpdate.Id;
+    }
+
+    public async Task<Venue?> GetAsNoTrackingAsync(int id)
+    {
+        return await _dbContext.Venues
+            .AsNoTracking()
+            .FirstOrDefaultAsync(v => v.Id == id);
     }
 }

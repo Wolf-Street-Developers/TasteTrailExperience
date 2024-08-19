@@ -14,10 +14,11 @@ public class MenuEfCoreRepository : IMenuRepository
         _dbContext = dbContext ?? throw new ArgumentNullException(nameof(dbContext));
     }
 
-    public async Task<List<Menu>> GetByCountAsync(int count)
+    public async Task<List<Menu>> GetFromToAsync(int from, int to)
     {
         return await _dbContext.Menus
-            .Take(count)
+            .Skip(from - 1)
+            .Take(to - from + 1)
             .ToListAsync();
     }
 
@@ -31,9 +32,6 @@ public class MenuEfCoreRepository : IMenuRepository
     public async Task<int> CreateAsync(Menu menu)
     {
         ArgumentNullException.ThrowIfNull(menu);
-
-        var venue = await _dbContext.Venues.FirstOrDefaultAsync(v => v.Id == menu.VenueId) ?? 
-            throw new ArgumentException($"Venue by ID: {menu.VenueId} not found.");
 
         await _dbContext.Menus.AddAsync(menu);
         await _dbContext.SaveChangesAsync();
@@ -56,21 +54,24 @@ public class MenuEfCoreRepository : IMenuRepository
 
     public async Task<int?> PutAsync(Menu menu)
     {
-        ArgumentNullException.ThrowIfNull(menu);
-
         var menuToUpdate = await _dbContext.Menus
-            .AsNoTracking()
             .FirstOrDefaultAsync(m => m.Id == menu.Id);
 
         if (menuToUpdate is null)
             return null;
 
-        var venue = await _dbContext.Venues.FirstOrDefaultAsync(v => v.Id == menu.VenueId) ??
-            throw new ArgumentException($"Venue by ID: {menu.VenueId} not found.");
+        menuToUpdate.Name = menu.Name;
+        menuToUpdate.Description = menu.Description;
 
-        _dbContext.Menus.Update(menu);
         await _dbContext.SaveChangesAsync();
 
         return menu.Id;
+    }
+
+    public async Task<Menu?> GetAsNoTrackingAsync(int id) 
+    {
+        return await _dbContext.Menus
+            .AsNoTracking()
+            .FirstOrDefaultAsync(f => f.Id == id);
     }
 }

@@ -24,11 +24,11 @@ public class FeedbackController : ControllerBase
     }
 
     [HttpGet]
-    public async Task<IActionResult> GetByCountAsync(int count)
+    public async Task<IActionResult> GetByCountAsync(int from, int to)
     {
         try 
         {
-            var feedbacks = await _feedbackService.GetFeedbacksByCountAsync(count);
+            var feedbacks = await _feedbackService.GetFeedbacksFromToAsync(from, to);
 
             return Ok(feedbacks);
         }
@@ -108,7 +108,7 @@ public class FeedbackController : ControllerBase
         try
         {
             var user = await _userManager.GetUserAsync(User);
-            var feedbackId = await _feedbackService.UpdateFeedbackAsync(feedback, user!);
+            var feedbackId = await _feedbackService.PutFeedbackAsync(feedback, user!);
 
             if (feedbackId is null)
                 return NotFound(feedbackId);

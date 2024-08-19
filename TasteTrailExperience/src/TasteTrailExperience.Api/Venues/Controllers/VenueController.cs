@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 using TasteTrailData.Api.Common.Extensions.Controllers;
 using TasteTrailData.Core.Users.Models;
 using TasteTrailData.Core.Venues.Models;
+using TasteTrailExperience.Core.Common.Exceptions;
 using TasteTrailExperience.Core.Venues.Dtos;
 using TasteTrailExperience.Core.Venues.Services;
 
@@ -25,11 +26,11 @@ public class VenueController : Controller
     }
 
     [HttpGet]
-    public async Task<IActionResult> GetByCountAsync(int count)
+    public async Task<IActionResult> GetFromToAsync(int from, int to)
     {
         try 
         {
-            var venues = await _venueService.GetVenuesByCountAsync(count);
+            var venues = await _venueService.GetVenuesFromToAsync(from, to);
 
             return Ok(venues);
         }
@@ -72,6 +73,10 @@ public class VenueController : Controller
         {
             return BadRequest(ex.Message);
         }
+        catch (ForbiddenAccessException)
+        {
+            return Forbid();
+        }
         catch (Exception ex)
         {
             return this.InternalServerError(ex.Message);
@@ -84,12 +89,17 @@ public class VenueController : Controller
     {
         try
         {
-            var venueId = await _venueService.DeleteVenueByIdAsync(id);
+            var user = await _userManager.GetUserAsync(User);
+            var venueId = await _venueService.DeleteVenueByIdAsync(id, user!);
 
             if (venueId is null)
                 return NotFound(venueId);
 
             return Ok(venueId);
+        }
+        catch (ForbiddenAccessException)
+        {
+            return Forbid();
         }
         catch (Exception ex)
         {
@@ -114,6 +124,10 @@ public class VenueController : Controller
         catch (ArgumentException ex)
         {
             return BadRequest(ex.Message);
+        }
+        catch (ForbiddenAccessException)
+        {
+            return Forbid();
         }
         catch (Exception ex)
         {

@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using TasteTrailData.Api.Common.Extensions.Controllers;
 using TasteTrailData.Core.Users.Models;
+using TasteTrailExperience.Core.Common.Exceptions;
 using TasteTrailExperience.Core.MenuItems.Dtos;
 using TasteTrailExperience.Core.MenuItems.Services;
 
@@ -14,17 +15,20 @@ public class MenuItemController : ControllerBase
 {
     private readonly IMenuItemService _menuItemService;
 
-    public MenuItemController(IMenuItemService menuItemService)
+    private readonly UserManager<User> _userManager;
+
+    public MenuItemController(IMenuItemService menuItemService, UserManager<User> userManager)
     {
         _menuItemService = menuItemService;
+        _userManager = userManager;
     }
 
     [HttpGet]
-    public async Task<IActionResult> GetByCountAsync(int count)
+    public async Task<IActionResult> GetFromToAsync(int from, int to)
     {
         try 
         {
-            var menuItems = await _menuItemService.GetMenuItemsByCountAsync(count);
+            var menuItems = await _menuItemService.GetMenuItemsFromToAsync(from, to);
 
             return Ok(menuItems);
         }
@@ -58,13 +62,18 @@ public class MenuItemController : ControllerBase
     {
         try
         {
-            var menuItemId = await _menuItemService.CreateMenuItemAsync(menu);
+            var user = await _userManager.GetUserAsync(User);
+            var menuItemId = await _menuItemService.CreateMenuItemAsync(menu, user!);
 
             return Ok(menuItemId);
         }
         catch (ArgumentException ex)
         {
             return BadRequest(ex.Message);
+        }
+        catch (ForbiddenAccessException)
+        {
+            return Forbid();
         }
         catch (Exception ex)
         {
@@ -78,12 +87,17 @@ public class MenuItemController : ControllerBase
     {
         try
         {
-            var menuItemId = await _menuItemService.DeleteMenuItemByIdAsync(id);
+            var user = await _userManager.GetUserAsync(User);
+            var menuItemId = await _menuItemService.DeleteMenuItemByIdAsync(id, user!);
 
             if (menuItemId is null)
                 return NotFound(menuItemId);
 
             return Ok(menuItemId);
+        }
+        catch (ForbiddenAccessException)
+        {
+            return Forbid();
         }
         catch (Exception ex)
         {
@@ -97,7 +111,8 @@ public class MenuItemController : ControllerBase
     {
         try
         {
-            var menuItemId = await _menuItemService.PutMenuItemAsync(venue);
+            var user = await _userManager.GetUserAsync(User);
+            var menuItemId = await _menuItemService.PutMenuItemAsync(venue, user!);
 
             if (menuItemId is null)
                 return NotFound(menuItemId);
@@ -107,6 +122,10 @@ public class MenuItemController : ControllerBase
         catch (ArgumentException ex)
         {
             return BadRequest(ex.Message);
+        }
+        catch (ForbiddenAccessException)
+        {
+            return Forbid();
         }
         catch (Exception ex)
         {

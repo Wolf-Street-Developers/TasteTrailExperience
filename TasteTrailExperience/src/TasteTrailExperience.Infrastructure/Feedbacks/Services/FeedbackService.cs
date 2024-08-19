@@ -1,5 +1,4 @@
 using Microsoft.AspNetCore.Identity;
-using Npgsql.TypeMapping;
 using TasteTrailData.Core.Feedbacks.Models;
 using TasteTrailData.Core.Users.Models;
 using TasteTrailExperience.Core.Common.Exceptions;
@@ -25,9 +24,12 @@ public class FeedbackService : IFeedbackService
         _venueRepository = venueRepository;
     }
 
-    public async Task<List<FeedbackGetDto>> GetFeedbacksByCountAsync(int count)
+    public async Task<List<FeedbackGetDto>> GetFeedbacksFromToAsync(int from, int to)
     {
-        var feedbacks = await _feedbackRepository.GetByCountAsync(count);
+        if (from <= 0 || to <= 0 || from > to)
+            throw new ArgumentException("Invalid 'from' and/or 'to' values.");
+
+        var feedbacks = await _feedbackRepository.GetFromToAsync(from, to);
         var feedbackDtos = new List<FeedbackGetDto>();
 
         foreach (var feedback in feedbacks)
@@ -44,6 +46,7 @@ public class FeedbackService : IFeedbackService
                 Rating = feedback.Rating,
                 CreationDate = feedback.CreationDate,
                 Username = user.UserName!,
+                UserId = user.Id,
                 VenueId = feedback.VenueId,
             };
 
@@ -72,6 +75,7 @@ public class FeedbackService : IFeedbackService
             Rating = feedback.Rating,
             CreationDate = feedback.CreationDate,
             Username = user.UserName!,
+            UserId = user.Id,
             VenueId = feedback.VenueId,
         };
 
@@ -114,7 +118,7 @@ public class FeedbackService : IFeedbackService
     }
 
 
-    public async Task<int?> UpdateFeedbackAsync(FeedbackUpdateDto feedback, User user)
+    public async Task<int?> PutFeedbackAsync(FeedbackUpdateDto feedback, User user)
     {
         var feedbackToUpdate = await _feedbackRepository.GetAsNoTrackingAsync(feedback.Id);
 

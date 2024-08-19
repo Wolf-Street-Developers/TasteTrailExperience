@@ -1,7 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using TasteTrailData.Core.Feedbacks.Models;
 using TasteTrailData.Infrastructure.Common.Data;
-using TasteTrailExperience.Core.Common.Exceptions;
 using TasteTrailExperience.Core.Feedbacks.Repositories;
 
 namespace TasteTrailExperience.Infrastructure.Feedbacks.Repositories;
@@ -15,10 +14,11 @@ public class FeedbackEfCoreRepository : IFeedbackRepository
         _dbContext = dbContext ?? throw new ArgumentNullException(nameof(dbContext));
     }
 
-    public async Task<List<Feedback>> GetByCountAsync(int count)
+    public async Task<List<Feedback>> GetFromToAsync(int from, int to)
     {
         return await _dbContext.Feedbacks
-            .Take(count)
+            .Skip(from - 1)
+            .Take(to - from + 1)
             .ToListAsync();
     }
 

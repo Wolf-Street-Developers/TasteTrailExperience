@@ -12,5 +12,7 @@ public class FeedbackGetDto
 
     public required string Username { get; set; }
 
+    public required string UserId { get; set; }
+
     public required int VenueId { get; set; }
 }

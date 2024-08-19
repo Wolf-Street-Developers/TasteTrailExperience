@@ -1,6 +1,9 @@
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using TasteTrailData.Api.Common.Extensions.Controllers;
+using TasteTrailData.Core.Users.Models;
+using TasteTrailExperience.Core.Common.Exceptions;
 using TasteTrailExperience.Core.Menus.Dtos;
 using TasteTrailExperience.Core.Menus.Services;
 
@@ -12,17 +15,20 @@ public class MenuController : ControllerBase
 {
     private readonly IMenuService _menuService;
 
-    public MenuController(IMenuService menuService)
+    private readonly UserManager<User> _userManager;
+
+    public MenuController(IMenuService menuService, UserManager<User> userManager)
     {
         _menuService = menuService;
+        _userManager = userManager;
     }
 
     [HttpGet]
-    public async Task<IActionResult> GetByCountAsync(int count)
+    public async Task<IActionResult> GetFromToAsync(int from, int to)
     {
         try 
         {
-            var menus = await _menuService.GetMenusByCountAsync(count);
+            var menus = await _menuService.GetMenusFromToAsync(from, to);
 
             return Ok(menus);
         }
@@ -56,13 +62,18 @@ public class MenuController : ControllerBase
     {
         try
         {
-            var menuId = await _menuService.CreateMenuAsync(menu);
+            var user = await _userManager.GetUserAsync(User);
+            var menuId = await _menuService.CreateMenuAsync(menu, user!);
 
             return Ok(menuId);
         }
         catch (ArgumentException ex)
         {
             return BadRequest(ex.Message);
+        }
+        catch (ForbiddenAccessException)
+        {
+            return Forbid();
         }
         catch (Exception ex)
         {
@@ -76,12 +87,17 @@ public class MenuController : ControllerBase
     {
         try
         {
-            var menuId = await _menuService.DeleteMenuByIdAsync(id);
+            var user = await _userManager.GetUserAsync(User);
+            var menuId = await _menuService.DeleteMenuByIdAsync(id, user!);
 
             if (menuId is null)
                 return NotFound(menuId);
 
             return Ok(menuId);
+        }
+        catch (ForbiddenAccessException)
+        {
+            return Forbid();
         }
         catch (Exception ex)
         {
@@ -95,7 +111,8 @@ public class MenuController : ControllerBase
     {
         try
         {
-            var menuId = await _menuService.PutMenuAsync(venue);
+            var user = await _userManager.GetUserAsync(User);
+            var menuId = await _menuService.PutMenuAsync(venue, user!);
 
             if (menuId is null)
                 return NotFound(menuId);
@@ -105,6 +122,10 @@ public class MenuController : ControllerBase
         catch (ArgumentException ex)
         {
             return BadRequest(ex.Message);
+        }
+        catch (ForbiddenAccessException)
+        {
+            return Forbid();
         }
         catch (Exception ex)
         {

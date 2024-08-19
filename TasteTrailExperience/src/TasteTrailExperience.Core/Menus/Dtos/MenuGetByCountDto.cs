@@ -10,5 +10,7 @@ public class MenuGetByCountDto
 
     public string? Description { get; set; }
 
+    public required string UserId { get; set; }
+
     public int VenueId { get; set; }
 }

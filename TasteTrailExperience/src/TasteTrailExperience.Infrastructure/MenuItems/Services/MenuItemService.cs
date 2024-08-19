@@ -1,7 +1,10 @@
 using TasteTrailData.Core.MenuItems.Models;
+using TasteTrailData.Core.Users.Models;
+using TasteTrailExperience.Core.Common.Exceptions;
 using TasteTrailExperience.Core.MenuItems.Dtos;
 using TasteTrailExperience.Core.MenuItems.Repositories;
 using TasteTrailExperience.Core.MenuItems.Services;
+using TasteTrailExperience.Core.Menus.Repositories;
 
 namespace TasteTrailExperience.Infrastructure.MenuItems.Services;
 
@@ -9,14 +12,20 @@ public class MenuItemService : IMenuItemService
 {
     private readonly IMenuItemRepository _menuItemRepository;
 
-    public MenuItemService(IMenuItemRepository menuItemRepository)
+    private readonly IMenuRepository _menuRepository;
+
+    public MenuItemService(IMenuItemRepository menuItemRepository, IMenuRepository menuRepository)
     {
         _menuItemRepository = menuItemRepository;
+        _menuRepository = menuRepository;
     }
 
-    public async Task<List<MenuItem>> GetMenuItemsByCountAsync(int count)
+    public async Task<List<MenuItem>> GetMenuItemsFromToAsync(int from, int to)
     {
-        var menuItems = await _menuItemRepository.GetByCountAsync(count);
+        if (from <= 0 || to <= 0 || from > to)
+            throw new ArgumentException("Invalid 'from' and/or 'to' values.");
+
+        var menuItems = await _menuItemRepository.GetFromToAsync(from, to);
 
         return menuItems;
     }
@@ -28,14 +37,18 @@ public class MenuItemService : IMenuItemService
         return menuItem;
     }
 
-    public async Task<int> CreateMenuItemAsync(MenuItemCreateDto menuItem)
+    public async Task<int> CreateMenuItemAsync(MenuItemCreateDto menuItem, User user)
     {
+        var menu = await _menuRepository.GetByIdAsync(menuItem.MenuId) ?? 
+            throw new ArgumentException($"Menu by ID: {menuItem.MenuId} not found.");
+
         var newMenuItem = new MenuItem() {
             Name = menuItem.Name,
             Description = menuItem.Description,
             Price = menuItem.Price,
             PopularityRate = menuItem.PopularityRate,
-            MenuId = menuItem.MenuId,
+            MenuId = menu.Id,
+            UserId = user.Id
         };
 
         var menuItemId = await _menuItemRepository.CreateAsync(newMenuItem);
@@ -43,22 +56,38 @@ public class MenuItemService : IMenuItemService
         return menuItemId;
     }
 
-    public async Task<int?> DeleteMenuItemByIdAsync(int id)
+    public async Task<int?> DeleteMenuItemByIdAsync(int id, User user)
     {
+        var menuItem = await _menuItemRepository.GetAsNoTrackingAsync(id);
+
+        if (menuItem is null)
+            return null;
+
+        if (menuItem.UserId != user.Id) 
+            throw new ForbiddenAccessException();
+
         var menuItemId = await _menuItemRepository.DeleteByIdAsync(id);
 
         return menuItemId;
     }
 
-    public async Task<int?> PutMenuItemAsync(MenuItemUpdateDto menuItem)
+    public async Task<int?> PutMenuItemAsync(MenuItemUpdateDto menuItem, User user)
     {
+        var menuItemToUpdate = await _menuItemRepository.GetAsNoTrackingAsync(menuItem.Id);
+
+        if (menuItemToUpdate is null)
+            return null;
+
+        if (menuItemToUpdate.UserId != user.Id)
+            throw new ForbiddenAccessException();
+
         var updatedMenuItem = new MenuItem() {
             Id = menuItem.Id,
             Name = menuItem.Name,
             Description = menuItem.Description,
             Price = menuItem.Price,
             PopularityRate = menuItem.PopularityRate,
-            MenuId = menuItem.MenuId,
+            UserId = user.Id
         };
 
         var menuItemId = await _menuItemRepository.PutAsync(updatedMenuItem);
