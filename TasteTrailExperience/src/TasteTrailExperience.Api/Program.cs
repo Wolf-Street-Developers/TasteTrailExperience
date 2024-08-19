@@ -1,7 +1,11 @@
 
 
+using System.Reflection;
+using FluentValidation;
+using FluentValidation.AspNetCore;
 using TasteTrailData.Api.Common.Extensions.ServiceCollection;
 using TasteTrailExperience.Api.Common.Extensions.ServiceCollection;
+using TasteTrailExperience.Core.Feedbacks.Dtos;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -13,12 +17,13 @@ builder.Services.InitAuth(builder.Configuration);
 builder.Services.InitSwagger();
 builder.Services.InitCors();
 builder.Services.RegisterDpInjection();
-builder.Services.AddValidators();
 
 builder.Services.AddAuthorization();
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+builder.Services.AddValidatorsFromAssembly(Assembly.GetExecutingAssembly());
+builder.Services.AddFluentValidationAutoValidation();
 
 var app = builder.Build();
 

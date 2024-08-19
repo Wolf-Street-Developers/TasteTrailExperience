@@ -1,3 +1,4 @@
+using FluentValidation;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -15,12 +16,15 @@ public class FeedbackController : ControllerBase
 {
     private readonly IFeedbackService _feedbackService;
 
+    private readonly IValidator<FeedbackCreateDto> _validator;
+
     private readonly UserManager<User> _userManager;
 
-    public FeedbackController(IFeedbackService feedbackService, UserManager<User> userManager)
+    public FeedbackController(IFeedbackService feedbackService, UserManager<User> userManager, IValidator<FeedbackCreateDto> validator)
     {
         _feedbackService = feedbackService;
         _userManager = userManager;
+        _validator = validator;
     }
 
     [HttpGet]
@@ -62,6 +66,12 @@ public class FeedbackController : ControllerBase
     {
         try
         {
+            // var result = _validator.Validate(feedback);
+            // if (!result.IsValid)
+            // {
+            //     return BadRequest(result.Errors);
+            // }
+
             var user = await _userManager.GetUserAsync(User);
             var feedbackId = await _feedbackService.CreateFeedbackAsync(feedback, user!);
 

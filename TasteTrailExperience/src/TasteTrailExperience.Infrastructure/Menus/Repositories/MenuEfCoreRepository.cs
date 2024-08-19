@@ -25,7 +25,6 @@ public class MenuEfCoreRepository : IMenuRepository
     public async Task<Menu?> GetByIdAsync(int id)
     {
         return await _dbContext.Menus
-            .Include(m => m.MenuItems)
             .FirstOrDefaultAsync(m => m.Id == id);
     }
 
