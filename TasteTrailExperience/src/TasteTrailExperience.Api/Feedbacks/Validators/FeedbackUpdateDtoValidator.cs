@@ -12,7 +12,7 @@ public class FeedbackUpdateDtoValidator : AbstractValidator<FeedbackUpdateDto>
             .GreaterThan(0);
 
         RuleFor(f => f.Rating)
-            .GreaterThan(-1)
-            .LessThan(6);
+            .GreaterThanOrEqualTo(0)
+            .LessThanOrEqualTo(5);
     }
 }

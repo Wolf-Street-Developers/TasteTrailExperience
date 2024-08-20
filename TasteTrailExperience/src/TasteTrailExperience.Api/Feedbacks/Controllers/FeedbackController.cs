@@ -16,15 +16,12 @@ public class FeedbackController : ControllerBase
 {
     private readonly IFeedbackService _feedbackService;
 
-    private readonly IValidator<FeedbackCreateDto> _validator;
-
     private readonly UserManager<User> _userManager;
 
-    public FeedbackController(IFeedbackService feedbackService, UserManager<User> userManager, IValidator<FeedbackCreateDto> validator)
+    public FeedbackController(IFeedbackService feedbackService, UserManager<User> userManager)
     {
         _feedbackService = feedbackService;
         _userManager = userManager;
-        _validator = validator;
     }
 
     [HttpGet]
@@ -42,7 +39,7 @@ public class FeedbackController : ControllerBase
         }
     }
 
-    [HttpGet]
+    [HttpGet("{id}")]
     public async Task<IActionResult> GetByIdAsync(int id)
     {
         try
@@ -62,16 +59,10 @@ public class FeedbackController : ControllerBase
 
     [HttpPost]
     [Authorize]
-    public async Task<IActionResult> CreateAsync(FeedbackCreateDto feedback)
+    public async Task<IActionResult> CreateAsync([FromBody] FeedbackCreateDto feedback)
     {
         try
         {
-            // var result = _validator.Validate(feedback);
-            // if (!result.IsValid)
-            // {
-            //     return BadRequest(result.Errors);
-            // }
-
             var user = await _userManager.GetUserAsync(User);
             var feedbackId = await _feedbackService.CreateFeedbackAsync(feedback, user!);
 
@@ -87,7 +78,7 @@ public class FeedbackController : ControllerBase
         }
     }
 
-    [HttpDelete]
+    [HttpDelete("{id}")]
     [Authorize]
     public async Task<IActionResult> DeleteByIdAsync(int id)
     {
@@ -113,7 +104,7 @@ public class FeedbackController : ControllerBase
 
     [HttpPut]
     [Authorize]
-    public async Task<IActionResult> UpdateAsync(FeedbackUpdateDto feedback)
+    public async Task<IActionResult> UpdateAsync([FromBody] FeedbackUpdateDto feedback)
     {
         try
         {

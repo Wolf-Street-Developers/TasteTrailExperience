@@ -58,6 +58,9 @@ public class FeedbackService : IFeedbackService
 
     public async Task<FeedbackGetDto?> GetFeedbackByIdAsync(int id)
     {
+        if (id <= 0)
+            throw new ArgumentException($"Invalid ID value: {id}.");
+
         var feedback = await _feedbackRepository.GetByIdAsync(id);
         
         if (feedback is null)
@@ -104,6 +107,9 @@ public class FeedbackService : IFeedbackService
 
     public async Task<int?> DeleteFeedbackByIdAsync(int id, User user)
     {
+        if (id <= 0)
+            throw new ArgumentException($"Invalid ID value: {id}.");
+
         var feedbackToUpdate = await _feedbackRepository.GetAsNoTrackingAsync(id);
 
         if (feedbackToUpdate is null)
@@ -146,6 +152,9 @@ public class FeedbackService : IFeedbackService
     }
 
     private async Task UpdateVenueRatingAsync(int venueId) {
+        if (venueId <= 0)
+            throw new ArgumentException($"Rating Update Error. Invalid ID value: {venueId}.");
+
         var venue = await _venueRepository.GetByIdAsync(venueId);
 
         if (venue is null)

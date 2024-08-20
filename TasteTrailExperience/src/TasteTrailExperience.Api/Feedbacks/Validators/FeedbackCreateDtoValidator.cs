@@ -9,12 +9,10 @@ public class FeedbackCreateDtoValidator : AbstractValidator<FeedbackCreateDto>
     {
         RuleFor(f => f.VenueId)
             .NotEmpty()
-            .GreaterThan(0)
-            .WithMessage("Invalid Venue ID.");
+            .GreaterThan(0);
 
         RuleFor(f => f.Rating)
-            .GreaterThan(-1)
-            .LessThan(6)
-            .WithMessage("Invalid rating.");
+            .GreaterThanOrEqualTo(0)
+            .LessThanOrEqualTo(5);
     }
 }

@@ -32,6 +32,9 @@ public class MenuItemService : IMenuItemService
 
     public async Task<MenuItem?> GetMenuItemByIdAsync(int id)
     {
+        if (id <= 0)
+            throw new ArgumentException($"Invalid ID value: {id}.");
+
         var menuItem = await _menuItemRepository.GetByIdAsync(id);
 
         return menuItem;
@@ -58,6 +61,9 @@ public class MenuItemService : IMenuItemService
 
     public async Task<int?> DeleteMenuItemByIdAsync(int id, User user)
     {
+        if (id <= 0)
+            throw new ArgumentException($"Invalid ID value: {id}.");
+
         var menuItem = await _menuItemRepository.GetAsNoTrackingAsync(id);
 
         if (menuItem is null)

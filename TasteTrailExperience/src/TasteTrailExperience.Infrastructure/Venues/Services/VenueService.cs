@@ -45,6 +45,9 @@ public class VenueService : IVenueService
 
     public async Task<Venue?> GetVenueByIdAsync(int id)
     {
+        if (id <= 0)
+            throw new ArgumentException($"Invalid ID value: {id}.");
+
         var venue = await _venueRepository.GetByIdAsync(id);
 
         return venue;
@@ -69,6 +72,9 @@ public class VenueService : IVenueService
 
     public async Task<int?> DeleteVenueByIdAsync(int id, User user)
     {
+        if (id <= 0)
+            throw new ArgumentException($"Invalid ID value: {id}.");
+
         var venue = await _venueRepository.GetAsNoTrackingAsync(id);
 
         if (venue is null)
