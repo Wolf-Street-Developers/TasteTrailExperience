@@ -24,12 +24,15 @@ public class FeedbackService : IFeedbackService
         _venueRepository = venueRepository;
     }
 
-    public async Task<List<FeedbackGetDto>> GetFeedbacksFromToAsync(int from, int to)
+    public async Task<List<FeedbackGetDto>> GetFeedbacksFromToAsync(int from, int to, int venueId)
     {
         if (from <= 0 || to <= 0 || from > to)
             throw new ArgumentException("Invalid 'from' and/or 'to' values.");
 
-        var feedbacks = await _feedbackRepository.GetFromToAsync(from, to);
+        if (venueId <= 0)
+            throw new ArgumentException($"Invalid Venue ID: {venueId}.");
+
+        var feedbacks = await _feedbackRepository.GetFromToFilterAsync(from, to, f => f.VenueId == venueId);
         var feedbackDtos = new List<FeedbackGetDto>();
 
         foreach (var feedback in feedbacks)
@@ -83,6 +86,11 @@ public class FeedbackService : IFeedbackService
         };
 
         return feedbackDto;
+    }
+
+    public async Task<int> GetFeedbacksCountAsync()
+    {
+        return await _feedbackRepository.GetCountAsync();
     }
 
     public async Task<int> CreateFeedbackAsync(FeedbackCreateDto feedback, User user)

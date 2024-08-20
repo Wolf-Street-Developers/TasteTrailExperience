@@ -5,9 +5,11 @@ namespace TasteTrailExperience.Core.Feedbacks.Services;
 
 public interface IFeedbackService
 {
-    Task<List<FeedbackGetDto>> GetFeedbacksFromToAsync(int from, int to);
+    Task<List<FeedbackGetDto>> GetFeedbacksFromToAsync(int from, int to, int venueId);
 
     Task<FeedbackGetDto?> GetFeedbackByIdAsync(int id);
+
+    Task<int> GetFeedbacksCountAsync();
 
     Task<int> CreateFeedbackAsync(FeedbackCreateDto feedback, User user);
 

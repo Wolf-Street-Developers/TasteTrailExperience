@@ -7,9 +7,11 @@ namespace TasteTrailExperience.Core.Venues.Services;
 
 public interface IVenueService
 {
-    Task<List<VenueGetByCountDto>> GetVenuesFromToAsync(int from, int to);
+    Task<List<Venue>> GetVenuesFromToAsync(int from, int to);
 
     Task<Venue?> GetVenueByIdAsync(int id);
+
+    Task<int> GetVenuesCountAsync();
 
     Task<int> CreateVenueAsync(VenueCreateDto venue, User user);
 

@@ -24,11 +24,11 @@ public class MenuController : ControllerBase
     }
 
     [HttpGet]
-    public async Task<IActionResult> GetFromToAsync(int from, int to)
+    public async Task<IActionResult> GetFromToAsync(int from, int to, int venueId)
     {
         try 
         {
-            var menus = await _menuService.GetMenusFromToAsync(from, to);
+            var menus = await _menuService.GetMenusFromToAsync(from, to, venueId);
 
             return Ok(menus);
         }

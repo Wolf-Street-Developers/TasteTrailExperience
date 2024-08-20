@@ -14,9 +14,10 @@ public class MenuEfCoreRepository : IMenuRepository
         _dbContext = dbContext ?? throw new ArgumentNullException(nameof(dbContext));
     }
 
-    public async Task<List<Menu>> GetFromToAsync(int from, int to)
+    public async Task<List<Menu>> GetFromToFilterAsync(int from, int to, Predicate<Menu> filter)
     {
         return await _dbContext.Menus
+            .Where(m => filter(m))
             .Skip(from - 1)
             .Take(to - from + 1)
             .ToListAsync();

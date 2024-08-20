@@ -14,9 +14,10 @@ public class FeedbackEfCoreRepository : IFeedbackRepository
         _dbContext = dbContext ?? throw new ArgumentNullException(nameof(dbContext));
     }
 
-    public async Task<List<Feedback>> GetFromToAsync(int from, int to)
+    public async Task<List<Feedback>> GetFromToFilterAsync(int from, int to, Predicate<Feedback> filter)
     {
         return await _dbContext.Feedbacks
+            .Where(f => filter(f))
             .Skip(from - 1)
             .Take(to - from + 1)
             .ToListAsync();
@@ -26,6 +27,11 @@ public class FeedbackEfCoreRepository : IFeedbackRepository
     {
         return await _dbContext.Feedbacks
             .FirstOrDefaultAsync(f => f.Id == id);
+    }
+    
+    public async Task<int> GetCountAsync()
+    {
+        return await _dbContext.Feedbacks.CountAsync();
     }
 
     public async Task<int> CreateAsync(Feedback feedback)

@@ -18,29 +18,14 @@ public class VenueService : IVenueService
         _venueRepository = venueRepository;
     }
 
-    public async Task<List<VenueGetByCountDto>> GetVenuesFromToAsync(int from, int to)
+    public async Task<List<Venue>> GetVenuesFromToAsync(int from, int to)
     {
         if (from <= 0 || to <= 0 || from > to)
             throw new ArgumentException("Invalid 'from' and/or 'to' values.");
 
         var venues = await _venueRepository.GetFromToAsync(from, to);
 
-        var venueDtos = venues.Select(venue => new VenueGetByCountDto
-        {
-            Id = venue.Id,
-            Name = venue.Name,
-            Address = venue.Address,
-            Description = venue.Description,
-            Email = venue.Email,
-            ContactNumber = venue.ContactNumber,
-            LogoUrlPath = venue.LogoUrlPath,
-            AveragePrice = venue.AveragePrice,
-            OverallRating = venue.OverallRating,
-            UserId = venue.UserId
-        }).ToList();
-
-
-        return venueDtos;
+        return venues;
     }
 
     public async Task<Venue?> GetVenueByIdAsync(int id)
@@ -51,6 +36,11 @@ public class VenueService : IVenueService
         var venue = await _venueRepository.GetByIdAsync(id);
 
         return venue;
+    }
+
+    public async Task<int> GetVenuesCountAsync()
+    {
+        return await _venueRepository.GetCountAsync();
     }
 
     public async Task<int> CreateVenueAsync(VenueCreateDto venue, User user)

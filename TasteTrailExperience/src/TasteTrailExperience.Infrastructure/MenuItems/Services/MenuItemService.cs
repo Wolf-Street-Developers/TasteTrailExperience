@@ -20,12 +20,15 @@ public class MenuItemService : IMenuItemService
         _menuRepository = menuRepository;
     }
 
-    public async Task<List<MenuItem>> GetMenuItemsFromToAsync(int from, int to)
+    public async Task<List<MenuItem>> GetMenuItemsFromToAsync(int from, int to, int menuId)
     {
         if (from <= 0 || to <= 0 || from > to)
             throw new ArgumentException("Invalid 'from' and/or 'to' values.");
+        
+        if (menuId <= 0)
+            throw new ArgumentException($"Invalid Menu ID: {menuId}.");
 
-        var menuItems = await _menuItemRepository.GetFromToAsync(from, to);
+        var menuItems = await _menuItemRepository.GetFromToFilterAsync(from, to, mi => mi.MenuId == menuId);
 
         return menuItems;
     }

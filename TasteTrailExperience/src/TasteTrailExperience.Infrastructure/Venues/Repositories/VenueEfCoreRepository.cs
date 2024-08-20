@@ -28,6 +28,11 @@ public class VenueEfCoreRepository : IVenueRepository
             .FirstOrDefaultAsync(v => v.Id == id);
     }
 
+    public Task<int> GetCountAsync()
+    {
+        return _dbContext.Venues.CountAsync();
+    }
+
     public async Task<int> CreateAsync(Venue venue)
     {
         ArgumentNullException.ThrowIfNull(venue);

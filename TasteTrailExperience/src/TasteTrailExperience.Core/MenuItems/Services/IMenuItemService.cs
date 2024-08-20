@@ -6,7 +6,7 @@ namespace TasteTrailExperience.Core.MenuItems.Services;
 
 public interface IMenuItemService
 {
-    Task<List<MenuItem>> GetMenuItemsFromToAsync(int from, int to);
+    Task<List<MenuItem>> GetMenuItemsFromToAsync(int from, int to, int menuId);
 
     Task<MenuItem?> GetMenuItemByIdAsync(int id);
 

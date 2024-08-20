@@ -58,6 +58,21 @@ public class VenueController : Controller
         }
     }
 
+    [HttpGet]
+    public async Task<IActionResult> GetCountAsync()
+    {
+        try
+        {
+             var count = await _venueService.GetVenuesCountAsync();
+
+            return Ok(count);
+        }
+        catch (Exception ex)
+        {
+            return this.InternalServerError(ex.Message);
+        }
+    }
+
     [HttpPost]
     [Authorize]
     public async Task<IActionResult> CreateAsync(VenueCreateDto venue)

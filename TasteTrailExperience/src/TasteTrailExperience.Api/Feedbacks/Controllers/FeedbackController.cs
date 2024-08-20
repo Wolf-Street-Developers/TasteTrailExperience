@@ -25,11 +25,11 @@ public class FeedbackController : ControllerBase
     }
 
     [HttpGet]
-    public async Task<IActionResult> GetByCountAsync(int from, int to)
+    public async Task<IActionResult> GetByCountAsync(int from, int to, int venueId)
     {
         try 
         {
-            var feedbacks = await _feedbackService.GetFeedbacksFromToAsync(from, to);
+            var feedbacks = await _feedbackService.GetFeedbacksFromToAsync(from, to, venueId);
 
             return Ok(feedbacks);
         }
@@ -50,6 +50,21 @@ public class FeedbackController : ControllerBase
                 return NotFound(id);
 
             return Ok(feedback);
+        }
+        catch (Exception ex)
+        {
+            return this.InternalServerError(ex.Message);
+        }
+    }
+
+    [HttpGet]
+    public async Task<IActionResult> GetCountAsync()
+    {
+        try 
+        {
+            var count = await _feedbackService.GetFeedbacksCountAsync();
+
+            return Ok(count);
         }
         catch (Exception ex)
         {
