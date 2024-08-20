@@ -103,14 +103,4 @@ public class VenueService : IVenueService
 
         return venueId;
     }
-
-    public Task<string> SetVenueLogo(Venue venue, IFormFile? logo)
-    {
-        throw new NotImplementedException();
-    }
-
-    public Task<string> DeleteVenueLogoAsync(int venueId)
-    {
-        throw new NotImplementedException();
-    }
 }

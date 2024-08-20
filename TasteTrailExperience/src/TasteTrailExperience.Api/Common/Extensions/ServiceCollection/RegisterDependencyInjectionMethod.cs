@@ -19,7 +19,7 @@ namespace TasteTrailExperience.Api.Common.Extensions.ServiceCollection;
 
 public static class RegisterDependencyInjectionMethod
 {
-    public static void RegisterDpInjection(this IServiceCollection serviceCollection)
+    public static void RegisterDependencyInjection(this IServiceCollection serviceCollection)
     {
         serviceCollection.AddTransient<IVenueRepository, VenueEfCoreRepository>();
         serviceCollection.AddTransient<IMenuRepository, MenuEfCoreRepository>();
@@ -27,6 +27,7 @@ public static class RegisterDependencyInjectionMethod
         serviceCollection.AddTransient<IFeedbackRepository, FeedbackEfCoreRepository>();
 
         serviceCollection.AddTransient<IVenueService, VenueService>();
+        serviceCollection.AddTransient<IVenueLogoService, VenueLogoService>();
         serviceCollection.AddTransient<IMenuService, MenuService>();
         serviceCollection.AddTransient<IMenuItemService, MenuItemService>();
         serviceCollection.AddTransient<IFeedbackService, FeedbackService>();

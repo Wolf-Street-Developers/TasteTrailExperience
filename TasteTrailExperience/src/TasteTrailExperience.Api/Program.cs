@@ -15,8 +15,11 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.InitAspnetIdentity(builder.Configuration);
 builder.Services.InitAuth(builder.Configuration);
 builder.Services.InitSwagger();
+
 builder.Services.InitCors();
-builder.Services.RegisterDpInjection();
+
+builder.Services.RegisterBlobStorage(builder.Configuration);
+builder.Services.RegisterDependencyInjection();
 
 builder.Services.AddAuthorization();
 builder.Services.AddControllers();

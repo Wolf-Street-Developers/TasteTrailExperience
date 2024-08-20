@@ -1,10 +1,8 @@
-using System.Security.Claims;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using TasteTrailData.Api.Common.Extensions.Controllers;
 using TasteTrailData.Core.Users.Models;
-using TasteTrailData.Core.Venues.Models;
 using TasteTrailExperience.Core.Common.Exceptions;
 using TasteTrailExperience.Core.Venues.Dtos;
 using TasteTrailExperience.Core.Venues.Services;
@@ -17,12 +15,15 @@ public class VenueController : Controller
 {
     private readonly IVenueService _venueService;
 
+    private readonly IVenueLogoService _venueLogoService;
+
     private readonly UserManager<User> _userManager;
 
-    public VenueController(IVenueService venueService, UserManager<User> userManager)
+    public VenueController(IVenueService venueService, UserManager<User> userManager, IVenueLogoService venueLogoService)
     {
         _venueService = venueService;
         _userManager = userManager;
+        _venueLogoService = venueLogoService;
     }
 
     [HttpGet]
@@ -75,12 +76,14 @@ public class VenueController : Controller
 
     [HttpPost]
     [Authorize]
-    public async Task<IActionResult> CreateAsync(VenueCreateDto venue)
+    public async Task<IActionResult> CreateAsync([FromBody] VenueCreateDto venue, [FromForm] IFormFile? logo)
     {
         try
         {
             var user = await _userManager.GetUserAsync(User);
             var venueId = await _venueService.CreateVenueAsync(venue, user!);
+
+            await _venueLogoService.SetVenueLogo(venueId, logo);
 
             return Ok(venueId);
         }
@@ -110,6 +113,8 @@ public class VenueController : Controller
             if (venueId is null)
                 return NotFound(venueId);
 
+            await _venueLogoService.DeleteVenueLogoAsync((int)venueId);
+
             return Ok(venueId);
         }
         catch (ForbiddenAccessException)
@@ -124,7 +129,7 @@ public class VenueController : Controller
 
     [HttpPut]
     [Authorize]
-    public async Task<IActionResult> UpdateAsync(VenueUpdateDto venue)
+    public async Task<IActionResult> UpdateAsync([FromBody] VenueUpdateDto venue, [FromForm] IFormFile? logo)
     {
         try
         {
@@ -133,6 +138,8 @@ public class VenueController : Controller
 
             if (venueId is null)
                 return NotFound(venueId);
+
+            await _venueLogoService.SetVenueLogo((int)venueId, logo);
 
             return Ok(venueId);
         }

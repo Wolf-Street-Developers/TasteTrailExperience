@@ -18,8 +18,4 @@ public interface IVenueService
     Task<int?> DeleteVenueByIdAsync(int id, User user);
     
     Task<int?> PutVenueAsync(VenueUpdateDto venue, User user);
-
-    Task<string> SetVenueLogo(Venue venue, IFormFile? logo);
-
-    Task<string> DeleteVenueLogoAsync(int venueId);
 }

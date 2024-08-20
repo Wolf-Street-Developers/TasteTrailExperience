@@ -1,3 +1,4 @@
+using System;
 using Microsoft.EntityFrameworkCore;
 using TasteTrailData.Core.Venues.Models;
 using TasteTrailData.Infrastructure.Common.Data;
@@ -83,5 +84,18 @@ public class VenueEfCoreRepository : IVenueRepository
         return await _dbContext.Venues
             .AsNoTracking()
             .FirstOrDefaultAsync(v => v.Id == id);
+    }
+
+    public async Task PatchLogoUrlPathAsync(Venue venue, string logoUrlPath)
+    {
+        ArgumentNullException.ThrowIfNull(venue);
+
+        if (string.IsNullOrWhiteSpace(logoUrlPath))
+            throw new ArgumentException("Logo URL path cannot be null or empty.", nameof(logoUrlPath));
+
+        venue.LogoUrlPath = logoUrlPath;
+        _dbContext.Venues.Update(venue);
+
+        await _dbContext.SaveChangesAsync();
     }
 }
