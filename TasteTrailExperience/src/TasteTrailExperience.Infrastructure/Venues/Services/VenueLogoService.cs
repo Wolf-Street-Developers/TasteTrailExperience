@@ -60,7 +60,8 @@ public class VenueLogoService : IVenueLogoService
         if (!string.IsNullOrEmpty(venue.LogoUrlPath) && !venue.LogoUrlPath.Equals(_defaultLogoUrl, StringComparison.OrdinalIgnoreCase))
         {
             var containerClient = _blobServiceClient.GetBlobContainerClient(_containerName);
-            var blobName = new Uri(venue.LogoUrlPath).AbsolutePath.TrimStart('/');
+            var blobUri = new Uri(venue.LogoUrlPath).AbsolutePath.TrimStart('/');
+            var blobName = Path.GetFileName(blobUri);
             var blobClient = containerClient.GetBlobClient(blobName);
 
             await blobClient.DeleteIfExistsAsync();

@@ -76,7 +76,7 @@ public class VenueController : Controller
 
     [HttpPost]
     [Authorize]
-    public async Task<IActionResult> CreateAsync([FromBody] VenueCreateDto venue, [FromForm] IFormFile? logo)
+    public async Task<IActionResult> CreateAsync([FromForm] VenueCreateDto venue, IFormFile? logo)
     {
         try
         {
@@ -107,13 +107,15 @@ public class VenueController : Controller
     {
         try
         {
+            var venue = await _venueService.GetVenueByIdAsync(id);
+
+            if (venue == null)
+                return NotFound(id);
+
+            await _venueLogoService.DeleteVenueLogoAsync(venue.Id);
+
             var user = await _userManager.GetUserAsync(User);
-            var venueId = await _venueService.DeleteVenueByIdAsync(id, user!);
-
-            if (venueId is null)
-                return NotFound(venueId);
-
-            await _venueLogoService.DeleteVenueLogoAsync((int)venueId);
+            var venueId = await _venueService.DeleteVenueByIdAsync(venue.Id, user!);
 
             return Ok(venueId);
         }
@@ -129,7 +131,7 @@ public class VenueController : Controller
 
     [HttpPut]
     [Authorize]
-    public async Task<IActionResult> UpdateAsync([FromBody] VenueUpdateDto venue, [FromForm] IFormFile? logo)
+    public async Task<IActionResult> UpdateAsync([FromForm] VenueUpdateDto venue, IFormFile? logo)
     {
         try
         {
