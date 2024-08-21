@@ -1,3 +1,4 @@
+using System.Linq.Expressions;
 using Microsoft.EntityFrameworkCore;
 using TasteTrailData.Core.Feedbacks.Models;
 using TasteTrailData.Infrastructure.Common.Data;
@@ -14,10 +15,10 @@ public class FeedbackEfCoreRepository : IFeedbackRepository
         _dbContext = dbContext ?? throw new ArgumentNullException(nameof(dbContext));
     }
 
-    public async Task<List<Feedback>> GetFromToFilterAsync(int from, int to, Predicate<Feedback> filter)
+    public async Task<List<Feedback>> GetFromToFilterAsync(int from, int to, Expression<Func<Feedback, bool>> filter)
     {
         return await _dbContext.Feedbacks
-            .Where(f => filter(f))
+            .Where(filter)
             .Skip(from - 1)
             .Take(to - from + 1)
             .ToListAsync();

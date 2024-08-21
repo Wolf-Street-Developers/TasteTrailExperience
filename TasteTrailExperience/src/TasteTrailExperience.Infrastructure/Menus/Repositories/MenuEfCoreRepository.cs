@@ -1,3 +1,4 @@
+using System.Linq.Expressions;
 using Microsoft.EntityFrameworkCore;
 using TasteTrailData.Core.Menus.Models;
 using TasteTrailData.Infrastructure.Common.Data;
@@ -14,10 +15,10 @@ public class MenuEfCoreRepository : IMenuRepository
         _dbContext = dbContext ?? throw new ArgumentNullException(nameof(dbContext));
     }
 
-    public async Task<List<Menu>> GetFromToFilterAsync(int from, int to, Predicate<Menu> filter)
+    public async Task<List<Menu>> GetFromToFilterAsync(int from, int to, Expression<Func<Menu, bool>> filter)
     {
         return await _dbContext.Menus
-            .Where(m => filter(m))
+            .Where(filter)
             .Skip(from - 1)
             .Take(to - from + 1)
             .ToListAsync();
