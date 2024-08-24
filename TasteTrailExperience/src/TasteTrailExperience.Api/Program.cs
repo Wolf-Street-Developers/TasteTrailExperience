@@ -16,7 +16,20 @@ builder.Services.InitAspnetIdentity(builder.Configuration);
 builder.Services.InitAuth(builder.Configuration);
 builder.Services.InitSwagger();
 
-builder.Services.InitCors();
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowAllOrigins", builder =>
+    {
+        builder.WithOrigins(
+            "http://localhost",
+            "http://localhost:5137",
+            "http://20.218.160.138:80",
+            "http://20.218.140.188"
+        )
+        .AllowAnyHeader()
+        .AllowAnyMethod();
+    });
+});
 
 builder.Services.RegisterBlobStorage(builder.Configuration);
 builder.Services.RegisterDependencyInjection();
@@ -31,11 +44,11 @@ builder.Services.AddFluentValidationAutoValidation();
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
-if (app.Environment.IsDevelopment())
-{
-    app.UseSwagger();
-    app.UseSwaggerUI();
-}
+
+app.UseSwagger();
+app.UseSwaggerUI();
+
+app.UseCors("AllowAllOrigins");
 
 app.MapControllers();
 
