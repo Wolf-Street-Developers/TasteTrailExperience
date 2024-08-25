@@ -1,8 +1,8 @@
-using System.Linq.Expressions;
 using Microsoft.EntityFrameworkCore;
 using TasteTrailData.Core.Feedbacks.Models;
 using TasteTrailData.Infrastructure.Common.Data;
 using TasteTrailExperience.Core.Feedbacks.Repositories;
+using TasteTrailExperience.Core.Filters;
 
 namespace TasteTrailExperience.Infrastructure.Feedbacks.Repositories;
 
@@ -15,13 +15,16 @@ public class FeedbackEfCoreRepository : IFeedbackRepository
         _dbContext = dbContext ?? throw new ArgumentNullException(nameof(dbContext));
     }
 
-    public async Task<List<Feedback>> GetFromToFilterAsync(int from, int to, Expression<Func<Feedback, bool>> filter)
+    public async Task<IEnumerable<Feedback>> GetFilteredByIdAsync(int venueId, IFilterSpecification<Feedback> specification, 
+        int pageNumber, int pageSize)
     {
-        return await _dbContext.Feedbacks
-            .Where(filter)
-            .Skip(from - 1)
-            .Take(to - from + 1)
-            .ToListAsync();
+        IQueryable<Feedback> query = _dbContext.Set<Feedback>();
+
+        query = query.Where(f => f.VenueId == venueId); // Getting feedbacks by VenueId
+        query = specification.Apply(query); // Adding Filter
+        query = query.Skip((pageNumber - 1) * pageSize).Take(pageSize); // Applying pagination
+
+        return await query.ToListAsync();
     }
 
     public async Task<Feedback?> GetByIdAsync(int id)

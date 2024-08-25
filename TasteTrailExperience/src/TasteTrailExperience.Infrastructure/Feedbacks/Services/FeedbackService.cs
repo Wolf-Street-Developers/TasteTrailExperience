@@ -5,6 +5,7 @@ using TasteTrailExperience.Core.Common.Exceptions;
 using TasteTrailExperience.Core.Feedbacks.Dtos;
 using TasteTrailExperience.Core.Feedbacks.Repositories;
 using TasteTrailExperience.Core.Feedbacks.Services;
+using TasteTrailExperience.Core.Filters;
 using TasteTrailExperience.Core.Venues.Repositories;
 
 namespace TasteTrailExperience.Infrastructure.Feedbacks.Services;
@@ -24,15 +25,16 @@ public class FeedbackService : IFeedbackService
         _venueRepository = venueRepository;
     }
 
-    public async Task<List<FeedbackGetDto>> GetFeedbacksFromToAsync(int from, int to, int venueId)
+    public async Task<List<FeedbackGetDto>> GetFeedbacksFiltered(int venueId, IFilterSpecification<Feedback> specification, 
+        int pageNumber, int pageSize)
     {
-        if (from <= 0 || to <= 0 || from > to)
-            throw new ArgumentException("Invalid 'from' and/or 'to' values.");
+        if (pageNumber <= 0 || pageSize <= 0)
+            throw new ArgumentException("Invalid 'pageNumber' and/or 'pageSize' values.");
 
         if (venueId <= 0)
             throw new ArgumentException($"Invalid Venue ID: {venueId}.");
 
-        var feedbacks = await _feedbackRepository.GetFromToFilterAsync(from, to, f => f.VenueId == venueId);
+        var feedbacks = await _feedbackRepository.GetFilteredByIdAsync(venueId, specification, pageNumber, pageSize);
         var feedbackDtos = new List<FeedbackGetDto>();
 
         foreach (var feedback in feedbacks)
