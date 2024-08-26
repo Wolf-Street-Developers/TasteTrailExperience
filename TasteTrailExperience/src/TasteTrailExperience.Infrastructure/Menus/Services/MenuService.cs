@@ -1,6 +1,8 @@
 using TasteTrailData.Core.Menus.Models;
 using TasteTrailData.Core.Users.Models;
 using TasteTrailExperience.Core.Common.Exceptions;
+using TasteTrailExperience.Core.Filters.Dtos;
+using TasteTrailExperience.Core.Filters.Models;
 using TasteTrailExperience.Core.Menus.Dtos;
 using TasteTrailExperience.Core.Menus.Repositories;
 using TasteTrailExperience.Core.Menus.Services;
@@ -20,17 +22,32 @@ public class MenuService : IMenuService
         _venueRepository = venueRepository;
     }
 
-    public async Task<List<Menu>> GetMenusFromToAsync(int from, int to, int venueId)
+    public async Task<FilterResponseDto<Menu>> GetMenusFiltered(FilterParametersPaginationDto filterParameters, int venueId)
     {
-        if (from <= 0 || to <= 0 || from > to)
-            throw new ArgumentException("Invalid 'from' and/or 'to' values.");
-        
         if (venueId <= 0)
             throw new ArgumentException($"Invalid Venue ID: {venueId}.");
 
-        var menus = await _menuRepository.GetFromToFilterAsync(from, to, m => m.VenueId == venueId);
+        var newFilterParameters = new FilterParameters<Menu>() {
+            PageNumber = filterParameters.PageNumber,
+            PageSize = filterParameters.PageSize,
+            Specification = null,
+            SearchTerm = null
+        };
 
-        return menus;
+        var menus = await _menuRepository.GetFilteredByIdAsync(newFilterParameters, venueId);
+
+        var totalMenus = await _menuRepository.GetCountBySpecificationIdAsync(newFilterParameters.Specification, venueId);
+        var totalPages = (int)Math.Ceiling(totalMenus / (double)filterParameters.PageSize);
+
+
+        var filterReponse = new FilterResponseDto<Menu>() {
+            CurrentPage = filterParameters.PageNumber,
+            AmountOfPages = totalPages,
+            AmountOfEntities = totalMenus,
+            Entities = menus
+        };
+
+        return filterReponse;
     }
 
     public async Task<Menu?> GetMenuByIdAsync(int id)

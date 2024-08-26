@@ -1,8 +1,8 @@
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Identity;
 using TasteTrailData.Core.Users.Models;
 using TasteTrailData.Core.Venues.Models;
 using TasteTrailExperience.Core.Common.Exceptions;
+using TasteTrailExperience.Core.Filters.Dtos;
+using TasteTrailExperience.Core.Filters.Models;
 using TasteTrailExperience.Core.Venues.Dtos;
 using TasteTrailExperience.Core.Venues.Repositories;
 using TasteTrailExperience.Core.Venues.Services;
@@ -18,14 +18,29 @@ public class VenueService : IVenueService
         _venueRepository = venueRepository;
     }
 
-    public async Task<List<Venue>> GetVenuesFromToAsync(int from, int to)
+    public async Task<FilterResponseDto<Venue>> GetVenuesFiltered(FilterParametersSearchDto filterParameters)
     {
-        if (from <= 0 || to <= 0 || from > to)
-            throw new ArgumentException("Invalid 'from' and/or 'to' values.");
+        var newFilterParameters = new FilterParameters<Venue>() {
+            PageNumber = filterParameters.PageNumber,
+            PageSize = filterParameters.PageSize,
+            Specification = null,
+            SearchTerm = null
+        };
 
-        var venues = await _venueRepository.GetFromToAsync(from, to);
+        var venues = await _venueRepository.GetFilteredAsync(newFilterParameters);
 
-        return venues;
+        var totalVenues = await _venueRepository.GetCountBySpecificationAsync(newFilterParameters.Specification);
+        var totalPages = (int)Math.Ceiling(totalVenues / (double)filterParameters.PageSize);
+
+
+        var filterReponse = new FilterResponseDto<Venue>() {
+            CurrentPage = filterParameters.PageNumber,
+            AmountOfPages = totalPages,
+            AmountOfEntities = totalVenues,
+            Entities = venues
+        };
+
+        return filterReponse;
     }
 
     public async Task<Venue?> GetVenueByIdAsync(int id)

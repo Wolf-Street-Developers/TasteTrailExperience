@@ -7,7 +7,7 @@ namespace TasteTrailExperience.Core.Menus.Services;
 
 public interface IMenuService
 {
-    Task<FilterResponseDto<Menu>> GetMenusFiltered(FilterParametersDto filterParameters, int venueId);
+    Task<FilterResponseDto<Menu>> GetMenusFiltered(FilterParametersPaginationDto filterParameters, int venueId);
 
     Task<Menu?> GetMenuByIdAsync(int id);
 

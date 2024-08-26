@@ -1,10 +1,13 @@
 using TasteTrailData.Core.MenuItems.Models;
 using TasteTrailData.Core.Users.Models;
 using TasteTrailExperience.Core.Common.Exceptions;
+using TasteTrailExperience.Core.Filters.Dtos;
+using TasteTrailExperience.Core.Filters.Models;
 using TasteTrailExperience.Core.MenuItems.Dtos;
 using TasteTrailExperience.Core.MenuItems.Repositories;
 using TasteTrailExperience.Core.MenuItems.Services;
 using TasteTrailExperience.Core.Menus.Repositories;
+using TasteTrailExperience.Infrastructure.MenuItems.Factories;
 
 namespace TasteTrailExperience.Infrastructure.MenuItems.Services;
 
@@ -20,17 +23,34 @@ public class MenuItemService : IMenuItemService
         _menuRepository = menuRepository;
     }
 
-    public async Task<List<MenuItem>> GetMenuItemsFromToAsync(int from, int to, int menuId)
+    
+
+    public async Task<FilterResponseDto<MenuItem>> GetMenuItemsFiltered(FilterParametersDto filterParameters, int menuId)
     {
-        if (from <= 0 || to <= 0 || from > to)
-            throw new ArgumentException("Invalid 'from' and/or 'to' values.");
-        
         if (menuId <= 0)
-            throw new ArgumentException($"Invalid Menu ID: {menuId}.");
+            throw new ArgumentException($"Invalid Venue ID: {menuId}.");
 
-        var menuItems = await _menuItemRepository.GetFromToFilterAsync(from, to, mi => mi.MenuId == menuId);
+        var newFilterParameters = new FilterParameters<MenuItem>() {
+            PageNumber = filterParameters.PageNumber,
+            PageSize = filterParameters.PageSize,
+            Specification = MenuItemFilterFactory.CreateFilter(filterParameters.Type),
+            SearchTerm = null
+        };
 
-        return menuItems;
+        var menuItems = await _menuItemRepository.GetFilteredByIdAsync(newFilterParameters, menuId);
+
+        var totalMenuItems = await _menuItemRepository.GetCountBySpecificationIdAsync(newFilterParameters.Specification, menuId);
+        var totalPages = (int)Math.Ceiling(totalMenuItems / (double)filterParameters.PageSize);
+
+
+        var filterReponse = new FilterResponseDto<MenuItem>() {
+            CurrentPage = filterParameters.PageNumber,
+            AmountOfPages = totalPages,
+            AmountOfEntities = totalMenuItems,
+            Entities = menuItems
+        };
+
+        return filterReponse;
     }
 
     public async Task<MenuItem?> GetMenuItemByIdAsync(int id)
