@@ -15,7 +15,6 @@
     <!-- Web Api and Swagger -->
     <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="8.0.6" />
     <PackageReference Include="Swashbuckle.AspNetCore" Version="6.4.0" />
-    <PackageReference Include="TasteTrailData" Version="2.1.6" />
   </ItemGroup>
 
   <ItemGroup>

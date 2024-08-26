@@ -1,12 +1,12 @@
 using Microsoft.AspNetCore.Identity;
 using TasteTrailData.Core.Feedbacks.Models;
+using TasteTrailData.Core.Filters.Specifications;
 using TasteTrailData.Core.Users.Models;
+using TasteTrailData.Infrastructure.Filters.Dtos;
 using TasteTrailExperience.Core.Common.Exceptions;
 using TasteTrailExperience.Core.Feedbacks.Dtos;
 using TasteTrailExperience.Core.Feedbacks.Repositories;
 using TasteTrailExperience.Core.Feedbacks.Services;
-using TasteTrailExperience.Core.Filters.Dtos;
-using TasteTrailExperience.Core.Filters.Models;
 using TasteTrailExperience.Core.Venues.Repositories;
 using TasteTrailExperience.Infrastructure.Feedbacks.Factories;
 
@@ -28,7 +28,7 @@ public class FeedbackService : IFeedbackService
         _venueRepository = venueRepository;
     }
 
-    public async Task<FilterResponseDto<FeedbackGetDto>> GetFeedbacksFiltered(FilterParametersDto filterParameters, int venueId)
+    public async Task<FilterResponseDto<FeedbackGetDto>> GetFeedbacksFilteredAsync(FilterParametersDto filterParameters, int venueId)
     {
         if (venueId <= 0)
             throw new ArgumentException($"Invalid Venue ID: {venueId}.");
@@ -187,7 +187,7 @@ public class FeedbackService : IFeedbackService
         if (venue is null)
             throw new ArgumentNullException(nameof(venueId));
 
-        venue.OverallRating = (float)Math.Round(venue.Feedbacks.Average(f => f.Rating), 2);
+        // venue.Rating = (float)Math.Round(venue.Feedbacks.Average(f => f.Rating), 2);
 
         await _venueRepository.PutAsync(venue);
     }

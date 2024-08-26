@@ -1,5 +1,4 @@
 using Microsoft.AspNetCore.Http;
-using TasteTrailData.Core.Venues.Models;
 
 namespace TasteTrailExperience.Core.Venues.Services;
 

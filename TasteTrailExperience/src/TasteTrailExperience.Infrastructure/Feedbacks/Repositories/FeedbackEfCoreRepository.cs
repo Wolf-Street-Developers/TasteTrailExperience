@@ -1,9 +1,8 @@
 using Microsoft.EntityFrameworkCore;
 using TasteTrailData.Core.Feedbacks.Models;
+using TasteTrailData.Core.Filters.Specifications;
 using TasteTrailData.Infrastructure.Common.Data;
 using TasteTrailExperience.Core.Feedbacks.Repositories;
-using TasteTrailExperience.Core.Filters.Models;
-using TasteTrailExperience.Core.Specifications.Filters;
 
 namespace TasteTrailExperience.Infrastructure.Feedbacks.Repositories;
 

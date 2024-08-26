@@ -1,8 +1,6 @@
-using TasteTrailData.Core.Feedbacks.Models;
 using TasteTrailData.Core.Users.Models;
+using TasteTrailData.Infrastructure.Filters.Dtos;
 using TasteTrailExperience.Core.Feedbacks.Dtos;
-using TasteTrailExperience.Core.Filters;
-using TasteTrailExperience.Core.Filters.Dtos;
 
 namespace TasteTrailExperience.Core.Feedbacks.Services;
 

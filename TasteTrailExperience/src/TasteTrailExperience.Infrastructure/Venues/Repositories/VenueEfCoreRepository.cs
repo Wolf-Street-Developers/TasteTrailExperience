@@ -1,9 +1,7 @@
-using System;
 using Microsoft.EntityFrameworkCore;
+using TasteTrailData.Core.Filters.Specifications;
 using TasteTrailData.Core.Venues.Models;
 using TasteTrailData.Infrastructure.Common.Data;
-using TasteTrailExperience.Core.Filters.Models;
-using TasteTrailExperience.Core.Specifications.Filters;
 using TasteTrailExperience.Core.Venues.Repositories;
 
 namespace TasteTrailExperience.Infrastructure.Venues.Repositories;

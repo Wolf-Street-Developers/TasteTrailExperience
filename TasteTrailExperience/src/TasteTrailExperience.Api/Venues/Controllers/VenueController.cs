@@ -3,8 +3,8 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using TasteTrailData.Api.Common.Extensions.Controllers;
 using TasteTrailData.Core.Users.Models;
+using TasteTrailData.Infrastructure.Filters.Dtos;
 using TasteTrailExperience.Core.Common.Exceptions;
-using TasteTrailExperience.Core.Filters.Dtos;
 using TasteTrailExperience.Core.Venues.Dtos;
 using TasteTrailExperience.Core.Venues.Services;
 
@@ -27,7 +27,7 @@ public class VenueController : Controller
         _venueLogoService = venueLogoService;
     }
 
-    [HttpGet]
+    [HttpPost]
     public async Task<IActionResult> GetFilteredAsync(FilterParametersSearchDto filterParameters)
     {
         try 

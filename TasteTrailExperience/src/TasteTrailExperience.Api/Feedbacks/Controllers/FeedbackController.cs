@@ -3,10 +3,10 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using TasteTrailData.Api.Common.Extensions.Controllers;
 using TasteTrailData.Core.Users.Models;
+using TasteTrailData.Infrastructure.Filters.Dtos;
 using TasteTrailExperience.Core.Common.Exceptions;
 using TasteTrailExperience.Core.Feedbacks.Dtos;
 using TasteTrailExperience.Core.Feedbacks.Services;
-using TasteTrailExperience.Core.Filters.Dtos;
 
 namespace TasteTrailExperience.Api.Feedbacks.Controllers;
 
@@ -24,7 +24,7 @@ public class FeedbackController : ControllerBase
         _userManager = userManager;
     }
 
-    [HttpGet("{venueId}")]
+    [HttpPost("{venueId}")]
     public async Task<IActionResult> GetFilteredAsync(FilterParametersDto filterParameters, int venueId)
     {
         try 

@@ -1,11 +1,9 @@
-
-
 using System.Reflection;
 using FluentValidation;
 using FluentValidation.AspNetCore;
+using TasteTrailData.Api.Common.Assembly;
 using TasteTrailData.Api.Common.Extensions.ServiceCollection;
 using TasteTrailExperience.Api.Common.Extensions.ServiceCollection;
-using TasteTrailExperience.Core.Feedbacks.Dtos;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -39,6 +37,10 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddValidatorsFromAssembly(Assembly.GetExecutingAssembly());
+
+var assembly = Assembly.GetAssembly(typeof(ApiAssemblyMarker)) ?? throw new InvalidOperationException("Unable to load the assembly containing ApiAssemblyMarker.");
+builder.Services.AddValidatorsFromAssembly(assembly);
+
 builder.Services.AddFluentValidationAutoValidation();
 
 var app = builder.Build();

@@ -1,10 +1,8 @@
-using System.Linq.Expressions;
 using Microsoft.EntityFrameworkCore;
+using TasteTrailData.Core.Filters.Specifications;
 using TasteTrailData.Core.Menus.Models;
 using TasteTrailData.Infrastructure.Common.Data;
-using TasteTrailExperience.Core.Filters.Models;
 using TasteTrailExperience.Core.Menus.Repositories;
-using TasteTrailExperience.Core.Specifications.Filters;
 
 namespace TasteTrailExperience.Infrastructure.Menus.Repositories;
 

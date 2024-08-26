@@ -3,8 +3,8 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using TasteTrailData.Api.Common.Extensions.Controllers;
 using TasteTrailData.Core.Users.Models;
+using TasteTrailData.Infrastructure.Filters.Dtos;
 using TasteTrailExperience.Core.Common.Exceptions;
-using TasteTrailExperience.Core.Filters.Dtos;
 using TasteTrailExperience.Core.Menus.Dtos;
 using TasteTrailExperience.Core.Menus.Services;
 
@@ -24,7 +24,7 @@ public class MenuController : ControllerBase
         _userManager = userManager;
     }
 
-    [HttpGet("{venueId}")]
+    [HttpPost("{venueId}")]
     public async Task<IActionResult> GetFilteredAsync(FilterParametersPaginationDto filterParameters, int venueId)
     {
         try 

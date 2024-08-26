@@ -2,6 +2,7 @@ namespace TasteTrailExperience.Api.Common.Extensions.ServiceCollection;
 
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.OpenApi.Models;
+using TasteTrailData.Core.Filters.Enums;
 
 public static class InitSwaggerMethod
 {

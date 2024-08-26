@@ -1,8 +1,8 @@
+using TasteTrailData.Core.Filters.Specifications;
 using TasteTrailData.Core.Users.Models;
 using TasteTrailData.Core.Venues.Models;
+using TasteTrailData.Infrastructure.Filters.Dtos;
 using TasteTrailExperience.Core.Common.Exceptions;
-using TasteTrailExperience.Core.Filters.Dtos;
-using TasteTrailExperience.Core.Filters.Models;
 using TasteTrailExperience.Core.Venues.Dtos;
 using TasteTrailExperience.Core.Venues.Repositories;
 using TasteTrailExperience.Core.Venues.Services;
@@ -18,7 +18,7 @@ public class VenueService : IVenueService
         _venueRepository = venueRepository;
     }
 
-    public async Task<FilterResponseDto<Venue>> GetVenuesFiltered(FilterParametersSearchDto filterParameters)
+    public async Task<FilterResponseDto<Venue>> GetVenuesFilteredAsync(FilterParametersSearchDto filterParameters)
     {
         var newFilterParameters = new FilterParameters<Venue>() {
             PageNumber = filterParameters.PageNumber,

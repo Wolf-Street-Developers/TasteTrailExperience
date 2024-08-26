@@ -1,7 +1,7 @@
+using TasteTrailData.Core.Filters.Enums;
+using TasteTrailData.Core.Filters.Specifications;
 using TasteTrailData.Core.MenuItems.Models;
-using TasteTrailExperience.Core.Filters.Enums;
-using TasteTrailExperience.Core.Specifications.Filters;
-using TasteTrailExperience.Infrastructure.Filters;
+using TasteTrailData.Infrastructure.Filters;
 
 namespace TasteTrailExperience.Infrastructure.MenuItems.Factories;
 

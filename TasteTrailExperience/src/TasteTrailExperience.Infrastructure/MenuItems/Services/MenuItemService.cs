@@ -1,8 +1,8 @@
+using TasteTrailData.Core.Filters.Specifications;
 using TasteTrailData.Core.MenuItems.Models;
 using TasteTrailData.Core.Users.Models;
+using TasteTrailData.Infrastructure.Filters.Dtos;
 using TasteTrailExperience.Core.Common.Exceptions;
-using TasteTrailExperience.Core.Filters.Dtos;
-using TasteTrailExperience.Core.Filters.Models;
 using TasteTrailExperience.Core.MenuItems.Dtos;
 using TasteTrailExperience.Core.MenuItems.Repositories;
 using TasteTrailExperience.Core.MenuItems.Services;
@@ -25,7 +25,7 @@ public class MenuItemService : IMenuItemService
 
     
 
-    public async Task<FilterResponseDto<MenuItem>> GetMenuItemsFiltered(FilterParametersDto filterParameters, int menuId)
+    public async Task<FilterResponseDto<MenuItem>> GetMenuItemsFilteredAsync(FilterParametersDto filterParameters, int menuId)
     {
         if (menuId <= 0)
             throw new ArgumentException($"Invalid Venue ID: {menuId}.");

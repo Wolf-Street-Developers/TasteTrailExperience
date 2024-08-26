@@ -1,7 +1,6 @@
-using Microsoft.AspNetCore.Http;
 using TasteTrailData.Core.Users.Models;
 using TasteTrailData.Core.Venues.Models;
-using TasteTrailExperience.Core.Filters.Dtos;
+using TasteTrailData.Infrastructure.Filters.Dtos;
 using TasteTrailExperience.Core.Venues.Dtos;
 
 namespace TasteTrailExperience.Core.Venues.Services;
