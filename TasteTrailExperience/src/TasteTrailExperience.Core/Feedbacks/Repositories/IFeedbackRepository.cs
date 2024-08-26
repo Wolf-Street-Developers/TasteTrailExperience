@@ -6,7 +6,7 @@ using TasteTrailExperience.Core.Specifications.Filters;
 namespace TasteTrailExperience.Core.Feedbacks.Repositories;
 
 public interface IFeedbackRepository : IGetFilteredByIdAsync<Feedback, int>, IGetAsNoTrackingAsync<Feedback?, int>, IGetCountAsync, 
-IGetCountBySpecificationAsync<Feedback, int>, IGetByIdAsync<Feedback?, int>,
+IGetCountBySpecificationIdAsync<Feedback, int>, IGetByIdAsync<Feedback?, int>,
 ICreateAsync<Feedback, int>, IDeleteByIdAsync<int, int?>, IPutAsync<Feedback, int?>
 {
     

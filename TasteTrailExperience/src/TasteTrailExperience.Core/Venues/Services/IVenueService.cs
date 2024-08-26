@@ -1,13 +1,14 @@
 using Microsoft.AspNetCore.Http;
 using TasteTrailData.Core.Users.Models;
 using TasteTrailData.Core.Venues.Models;
+using TasteTrailExperience.Core.Filters.Dtos;
 using TasteTrailExperience.Core.Venues.Dtos;
 
 namespace TasteTrailExperience.Core.Venues.Services;
 
 public interface IVenueService
 {
-    Task<List<Venue>> GetVenuesFromToAsync(int from, int to);
+    Task<FilterResponseDto<Venue>> GetVenuesFiltered(FilterParametersSearchDto filterParameters);
 
     Task<Venue?> GetVenueByIdAsync(int id);
 

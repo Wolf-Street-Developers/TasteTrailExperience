@@ -2,7 +2,9 @@ using System.Linq.Expressions;
 using Microsoft.EntityFrameworkCore;
 using TasteTrailData.Core.Menus.Models;
 using TasteTrailData.Infrastructure.Common.Data;
+using TasteTrailExperience.Core.Filters.Models;
 using TasteTrailExperience.Core.Menus.Repositories;
+using TasteTrailExperience.Core.Specifications.Filters;
 
 namespace TasteTrailExperience.Infrastructure.Menus.Repositories;
 
@@ -15,19 +17,35 @@ public class MenuEfCoreRepository : IMenuRepository
         _dbContext = dbContext ?? throw new ArgumentNullException(nameof(dbContext));
     }
 
-    public async Task<List<Menu>> GetFromToFilterAsync(int from, int to, Expression<Func<Menu, bool>> filter)
+    public async Task<List<Menu>> GetFilteredByIdAsync(FilterParameters<Menu> parameters, int venueId)
     {
-        return await _dbContext.Menus
-            .Where(filter)
-            .Skip(from - 1)
-            .Take(to - from + 1)
-            .ToListAsync();
+        IQueryable<Menu> query = _dbContext.Set<Menu>();
+
+        query = query.Where(m => m.VenueId == venueId);
+
+        if (parameters.Specification is not null)
+            query = parameters.Specification.Apply(query);
+
+        query = query.Skip((parameters.PageNumber - 1) * parameters.PageSize).Take(parameters.PageSize);
+
+        return await query.ToListAsync();
     }
 
     public async Task<Menu?> GetByIdAsync(int id)
     {
         return await _dbContext.Menus
             .FirstOrDefaultAsync(m => m.Id == id);
+    }
+
+    public async Task<int> GetCountBySpecificationIdAsync(IFilterSpecification<Menu>? specification, int venueId)
+    {
+        var query = _dbContext.Menus.AsQueryable();
+        query = query.Where(m => m.VenueId == venueId);
+
+        if (specification != null)
+            query = specification.Apply(query);
+
+        return await query.CountAsync();
     }
 
     public async Task<int> CreateAsync(Menu menu)

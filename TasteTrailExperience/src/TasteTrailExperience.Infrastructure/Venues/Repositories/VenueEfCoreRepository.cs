@@ -2,6 +2,8 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using TasteTrailData.Core.Venues.Models;
 using TasteTrailData.Infrastructure.Common.Data;
+using TasteTrailExperience.Core.Filters.Models;
+using TasteTrailExperience.Core.Specifications.Filters;
 using TasteTrailExperience.Core.Venues.Repositories;
 
 namespace TasteTrailExperience.Infrastructure.Venues.Repositories;
@@ -15,12 +17,16 @@ public class VenueEfCoreRepository : IVenueRepository
         _dbContext = dbContext ?? throw new ArgumentNullException(nameof(dbContext));
     }
 
-    public async Task<List<Venue>> GetFromToAsync(int from, int to)
+    public async Task<List<Venue>> GetFilteredAsync(FilterParameters<Venue> parameters)
     {
-        return await _dbContext.Venues
-            .Skip(from - 1)
-            .Take(to - from + 1)
-            .ToListAsync();
+        IQueryable<Venue> query = _dbContext.Set<Venue>();
+
+        if (parameters.Specification is not null)
+            query = parameters.Specification.Apply(query);
+
+        query = query.Skip((parameters.PageNumber - 1) * parameters.PageSize).Take(parameters.PageSize);
+
+        return await query.ToListAsync();
     }
 
     public async Task<Venue?> GetByIdAsync(int id)
@@ -32,6 +38,16 @@ public class VenueEfCoreRepository : IVenueRepository
     public Task<int> GetCountAsync()
     {
         return _dbContext.Venues.CountAsync();
+    }
+
+    public async Task<int> GetCountBySpecificationAsync(IFilterSpecification<Venue>? specification)
+    {
+        var query = _dbContext.Venues.AsQueryable();
+
+        if (specification != null)
+            query = specification.Apply(query);
+
+        return await query.CountAsync();
     }
 
     public async Task<int> CreateAsync(Venue venue)

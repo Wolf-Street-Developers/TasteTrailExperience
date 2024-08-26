@@ -16,7 +16,7 @@ public class FeedbackEfCoreRepository : IFeedbackRepository
         _dbContext = dbContext ?? throw new ArgumentNullException(nameof(dbContext));
     }
 
-    public async Task<IEnumerable<Feedback>> GetFilteredByIdAsync(FilterParameters<Feedback> parameters, int venueId)
+    public async Task<List<Feedback>> GetFilteredByIdAsync(FilterParameters<Feedback> parameters, int venueId)
     {
         IQueryable<Feedback> query = _dbContext.Set<Feedback>();
 
@@ -41,9 +41,8 @@ public class FeedbackEfCoreRepository : IFeedbackRepository
         return await _dbContext.Feedbacks.CountAsync();
     }
 
-    public async Task<int> GetCountBySpecificationAsync(IFilterSpecification<Feedback>? specification, int venueId)
+    public async Task<int> GetCountBySpecificationIdAsync(IFilterSpecification<Feedback>? specification, int venueId)
     {
-
         var query = _dbContext.Feedbacks.AsQueryable();
         query = query.Where(f => f.VenueId == venueId);
 

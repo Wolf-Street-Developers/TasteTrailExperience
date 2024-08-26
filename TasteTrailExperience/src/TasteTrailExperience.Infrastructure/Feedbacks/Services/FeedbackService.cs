@@ -30,9 +30,6 @@ public class FeedbackService : IFeedbackService
 
     public async Task<FilterResponseDto<FeedbackGetDto>> GetFeedbacksFiltered(FilterParametersDto filterParameters, int venueId)
     {
-        if (filterParameters.PageNumber <= 0 || filterParameters.PageSize <= 0)
-            throw new ArgumentException("Invalid 'pageNumber' and/or 'pageSize' values.");
-
         if (venueId <= 0)
             throw new ArgumentException($"Invalid Venue ID: {venueId}.");
 
@@ -67,7 +64,7 @@ public class FeedbackService : IFeedbackService
             feedbackDtos.Add(feedbackDto);
         }
 
-        var totalFeedbacks = await _feedbackRepository.GetCountBySpecificationAsync(newFilterParameters.Specification, venueId);
+        var totalFeedbacks = await _feedbackRepository.GetCountBySpecificationIdAsync(newFilterParameters.Specification, venueId);
         var totalPages = (int)Math.Ceiling(totalFeedbacks / (double)filterParameters.PageSize);
 
 

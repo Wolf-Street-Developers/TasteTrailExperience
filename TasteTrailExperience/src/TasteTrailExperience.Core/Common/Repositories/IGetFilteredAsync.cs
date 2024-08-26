@@ -4,5 +4,5 @@ namespace TasteTrailExperience.Core.Common.Repositories;
 
 public interface IGetFilteredAsync<TEntity>
 {
-    Task<IEnumerable<TEntity>> GetFilteredAsync(FilterParameters<TEntity> parameters);
+    Task<List<TEntity>> GetFilteredAsync(FilterParameters<TEntity> parameters);
 }
