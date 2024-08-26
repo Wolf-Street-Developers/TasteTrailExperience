@@ -1,11 +1,11 @@
-using TasteTrailExperience.Core.Filters;
 using TasteTrailExperience.Core.Filters.Base;
+using TasteTrailExperience.Core.Specifications.Filters;
 
 namespace TasteTrailExperience.Infrastructure.Filters;
 
-public class MostLikedFilter : IFilterSpecification<ILikeable>
+public class MostLikedFilter<T> : IFilterSpecification<T> where T : ILikeable
 {
-    public IQueryable<ILikeable> Apply(IQueryable<ILikeable> query)
+    public IQueryable<T> Apply(IQueryable<T> query)
     {
         return query.OrderByDescending(e => e.Likes);
     }

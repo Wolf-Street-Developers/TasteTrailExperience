@@ -1,11 +1,11 @@
-using TasteTrailExperience.Core.Filters;
 using TasteTrailExperience.Core.Filters.Base;
+using TasteTrailExperience.Core.Specifications.Filters;
 
 namespace TasteTrailExperience.Infrastructure.Filters;
 
-public class OldestFirstFilter : IFilterSpecification<ICreateable>
+public class OldestFirstFilter<T> : IFilterSpecification<T> where T : ICreateable
 {
-    public IQueryable<ICreateable> Apply(IQueryable<ICreateable> query)
+    public IQueryable<T> Apply(IQueryable<T> query)
     {
         return query.OrderBy(e => e.CreationDate);
     }

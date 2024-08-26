@@ -3,10 +3,10 @@ using TasteTrailExperience.Core.Specifications.Filters;
 
 namespace TasteTrailExperience.Infrastructure.Filters;
 
-public class NewestFirstFilter<T> : IFilterSpecification<T> where T : ICreateable
+public class LowestRatedFilter<T> : IFilterSpecification<T> where T : IRateable
 {
     public IQueryable<T> Apply(IQueryable<T> query)
     {
-        return query.OrderByDescending(e => e.CreationDate);
+        return query.OrderBy(e => e.Rating);
     }
 }

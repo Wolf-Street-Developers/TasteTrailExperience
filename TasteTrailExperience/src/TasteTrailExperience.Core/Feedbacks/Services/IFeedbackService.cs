@@ -2,13 +2,13 @@ using TasteTrailData.Core.Feedbacks.Models;
 using TasteTrailData.Core.Users.Models;
 using TasteTrailExperience.Core.Feedbacks.Dtos;
 using TasteTrailExperience.Core.Filters;
+using TasteTrailExperience.Core.Filters.Dtos;
 
 namespace TasteTrailExperience.Core.Feedbacks.Services;
 
 public interface IFeedbackService
 {
-    Task<List<FeedbackGetDto>> GetFeedbacksFiltered(int venueId, IFilterSpecification<Feedback> specification, 
-        int pageNumber, int pageSize);
+    Task<FilterResponseDto<FeedbackGetDto>> GetFeedbacksFiltered(FilterParametersDto filterParameters, int venueId);
 
     Task<FeedbackGetDto?> GetFeedbackByIdAsync(int id);
 

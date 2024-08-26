@@ -1,11 +1,11 @@
-using TasteTrailExperience.Core.Filters;
 using TasteTrailExperience.Core.Filters.Base;
+using TasteTrailExperience.Core.Specifications.Filters;
 
 namespace TasteTrailExperience.Infrastructure.Filters;
 
-public class HighestRatedFilter : IFilterSpecification<IRateable>
+public class HighestRatedFilter<T> : IFilterSpecification<T> where T : IRateable
 {
-    public IQueryable<IRateable> Apply(IQueryable<IRateable> query)
+    public IQueryable<T> Apply(IQueryable<T> query)
     {
         return query.OrderByDescending(e => e.Rating);
     }

@@ -1,12 +1,16 @@
 namespace TasteTrailExperience.Core.Filters.Enums;
 
-public enum FilterTypes
+public enum FilterType
 {
     MostLiked,
 
     HighestRated,
 
     NewestFirst,
+
+    MostFeedbacks,
     
     OldestFirst,
+
+    LowestRated,
 }

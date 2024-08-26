@@ -2,7 +2,8 @@ using Microsoft.EntityFrameworkCore;
 using TasteTrailData.Core.Feedbacks.Models;
 using TasteTrailData.Infrastructure.Common.Data;
 using TasteTrailExperience.Core.Feedbacks.Repositories;
-using TasteTrailExperience.Core.Filters;
+using TasteTrailExperience.Core.Filters.Models;
+using TasteTrailExperience.Core.Specifications.Filters;
 
 namespace TasteTrailExperience.Infrastructure.Feedbacks.Repositories;
 
@@ -15,14 +16,16 @@ public class FeedbackEfCoreRepository : IFeedbackRepository
         _dbContext = dbContext ?? throw new ArgumentNullException(nameof(dbContext));
     }
 
-    public async Task<IEnumerable<Feedback>> GetFilteredByIdAsync(int venueId, IFilterSpecification<Feedback> specification, 
-        int pageNumber, int pageSize)
+    public async Task<IEnumerable<Feedback>> GetFilteredByIdAsync(FilterParameters<Feedback> parameters, int venueId)
     {
         IQueryable<Feedback> query = _dbContext.Set<Feedback>();
 
         query = query.Where(f => f.VenueId == venueId); // Getting feedbacks by VenueId
-        query = specification.Apply(query); // Adding Filter
-        query = query.Skip((pageNumber - 1) * pageSize).Take(pageSize); // Applying pagination
+
+        if (parameters.Specification is not null)
+            query = parameters.Specification.Apply(query); // Adding Filter
+
+        query = query.Skip((parameters.PageNumber - 1) * parameters.PageSize).Take(parameters.PageSize); // Applying pagination
 
         return await query.ToListAsync();
     }
@@ -36,6 +39,18 @@ public class FeedbackEfCoreRepository : IFeedbackRepository
     public async Task<int> GetCountAsync()
     {
         return await _dbContext.Feedbacks.CountAsync();
+    }
+
+    public async Task<int> GetCountBySpecificationAsync(IFilterSpecification<Feedback>? specification, int venueId)
+    {
+
+        var query = _dbContext.Feedbacks.AsQueryable();
+        query = query.Where(f => f.VenueId == venueId);
+
+        if (specification != null)
+            query = specification.Apply(query);
+
+        return await query.CountAsync();
     }
 
     public async Task<int> CreateAsync(Feedback feedback)

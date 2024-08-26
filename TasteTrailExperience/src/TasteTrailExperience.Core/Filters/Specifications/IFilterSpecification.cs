@@ -1,4 +1,4 @@
-namespace TasteTrailExperience.Core.Filters;
+namespace TasteTrailExperience.Core.Specifications.Filters;
 
 public interface IFilterSpecification<T>
 {

@@ -5,8 +5,10 @@ using TasteTrailExperience.Core.Common.Exceptions;
 using TasteTrailExperience.Core.Feedbacks.Dtos;
 using TasteTrailExperience.Core.Feedbacks.Repositories;
 using TasteTrailExperience.Core.Feedbacks.Services;
-using TasteTrailExperience.Core.Filters;
+using TasteTrailExperience.Core.Filters.Dtos;
+using TasteTrailExperience.Core.Filters.Models;
 using TasteTrailExperience.Core.Venues.Repositories;
+using TasteTrailExperience.Infrastructure.Feedbacks.Factories;
 
 namespace TasteTrailExperience.Infrastructure.Feedbacks.Services;
 
@@ -18,23 +20,30 @@ public class FeedbackService : IFeedbackService
 
     private readonly UserManager<User> _userManager;
 
-    public FeedbackService(IFeedbackRepository feedbackRepository,  IVenueRepository venueRepository, UserManager<User> userManager)
+    public FeedbackService(IFeedbackRepository feedbackRepository,  IVenueRepository venueRepository,
+        UserManager<User> userManager)
     {
         _feedbackRepository = feedbackRepository;
         _userManager = userManager;
         _venueRepository = venueRepository;
     }
 
-    public async Task<List<FeedbackGetDto>> GetFeedbacksFiltered(int venueId, IFilterSpecification<Feedback> specification, 
-        int pageNumber, int pageSize)
+    public async Task<FilterResponseDto<FeedbackGetDto>> GetFeedbacksFiltered(FilterParametersDto filterParameters, int venueId)
     {
-        if (pageNumber <= 0 || pageSize <= 0)
+        if (filterParameters.PageNumber <= 0 || filterParameters.PageSize <= 0)
             throw new ArgumentException("Invalid 'pageNumber' and/or 'pageSize' values.");
 
         if (venueId <= 0)
             throw new ArgumentException($"Invalid Venue ID: {venueId}.");
 
-        var feedbacks = await _feedbackRepository.GetFilteredByIdAsync(venueId, specification, pageNumber, pageSize);
+        var newFilterParameters = new FilterParameters<Feedback>() {
+            PageNumber = filterParameters.PageNumber,
+            PageSize = filterParameters.PageSize,
+            Specification = FeedbackFilterFactory.CreateFilter(filterParameters.Type),
+            SearchTerm = null
+        };
+
+        var feedbacks = await _feedbackRepository.GetFilteredByIdAsync(newFilterParameters, venueId);
         var feedbackDtos = new List<FeedbackGetDto>();
 
         foreach (var feedback in feedbacks)
@@ -58,7 +67,18 @@ public class FeedbackService : IFeedbackService
             feedbackDtos.Add(feedbackDto);
         }
 
-        return feedbackDtos;
+        var totalFeedbacks = await _feedbackRepository.GetCountBySpecificationAsync(newFilterParameters.Specification, venueId);
+        var totalPages = (int)Math.Ceiling(totalFeedbacks / (double)filterParameters.PageSize);
+
+
+        var filterReponse = new FilterResponseDto<FeedbackGetDto>() {
+            CurrentPage = filterParameters.PageNumber,
+            AmountOfPages = totalPages,
+            AmountOfEntities = totalFeedbacks,
+            Entities = feedbackDtos
+        };
+
+        return filterReponse;
     }
 
     public async Task<FeedbackGetDto?> GetFeedbackByIdAsync(int id)
