@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 using TasteTrailData.Api.Common.Extensions.Controllers;
 using TasteTrailData.Core.Users.Models;
 using TasteTrailExperience.Core.Common.Exceptions;
+using TasteTrailExperience.Core.Filters.Dtos;
 using TasteTrailExperience.Core.Venues.Dtos;
 using TasteTrailExperience.Core.Venues.Services;
 
@@ -27,13 +28,13 @@ public class VenueController : Controller
     }
 
     [HttpGet]
-    public async Task<IActionResult> GetFromToAsync(int from, int to)
+    public async Task<IActionResult> GetFilteredAsync(FilterParametersSearchDto filterParameters)
     {
         try 
         {
-            var venues = await _venueService.GetVenuesFromToAsync(from, to);
+            var filterResponse = await _venueService.GetVenuesFilteredAsync(filterParameters);
 
-            return Ok(venues);
+            return Ok(filterResponse);
         }
         catch (Exception ex)
         {

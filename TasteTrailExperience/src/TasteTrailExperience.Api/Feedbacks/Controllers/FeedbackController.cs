@@ -6,6 +6,7 @@ using TasteTrailData.Core.Users.Models;
 using TasteTrailExperience.Core.Common.Exceptions;
 using TasteTrailExperience.Core.Feedbacks.Dtos;
 using TasteTrailExperience.Core.Feedbacks.Services;
+using TasteTrailExperience.Core.Filters.Dtos;
 
 namespace TasteTrailExperience.Api.Feedbacks.Controllers;
 
@@ -23,14 +24,14 @@ public class FeedbackController : ControllerBase
         _userManager = userManager;
     }
 
-    [HttpGet]
-    public async Task<IActionResult> GetByCountAsync(int from, int to, int venueId)
+    [HttpGet("{venueId}")]
+    public async Task<IActionResult> GetFilteredAsync(FilterParametersDto filterParameters, int venueId)
     {
         try 
         {
-            var feedbacks = await _feedbackService.GetFeedbacksFromToAsync(from, to, venueId);
+            var filterResponse = await _feedbackService.GetFeedbacksFilteredAsync(filterParameters, venueId);
 
-            return Ok(feedbacks);
+            return Ok(filterResponse);
         }
         catch (Exception ex)
         {

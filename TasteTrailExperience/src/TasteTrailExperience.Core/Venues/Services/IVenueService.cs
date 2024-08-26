@@ -8,7 +8,7 @@ namespace TasteTrailExperience.Core.Venues.Services;
 
 public interface IVenueService
 {
-    Task<FilterResponseDto<Venue>> GetVenuesFiltered(FilterParametersSearchDto filterParameters);
+    Task<FilterResponseDto<Venue>> GetVenuesFilteredAsync(FilterParametersSearchDto filterParameters);
 
     Task<Venue?> GetVenueByIdAsync(int id);
 

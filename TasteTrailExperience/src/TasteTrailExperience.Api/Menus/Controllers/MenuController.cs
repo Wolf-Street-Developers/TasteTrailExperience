@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 using TasteTrailData.Api.Common.Extensions.Controllers;
 using TasteTrailData.Core.Users.Models;
 using TasteTrailExperience.Core.Common.Exceptions;
+using TasteTrailExperience.Core.Filters.Dtos;
 using TasteTrailExperience.Core.Menus.Dtos;
 using TasteTrailExperience.Core.Menus.Services;
 
@@ -23,14 +24,14 @@ public class MenuController : ControllerBase
         _userManager = userManager;
     }
 
-    [HttpGet]
-    public async Task<IActionResult> GetFromToAsync(int from, int to, int venueId)
+    [HttpGet("{venueId}")]
+    public async Task<IActionResult> GetFilteredAsync(FilterParametersPaginationDto filterParameters, int venueId)
     {
         try 
         {
-            var menus = await _menuService.GetMenusFromToAsync(from, to, venueId);
+            var filterResponse = await _menuService.GetMenusFilteredAsync(filterParameters, venueId);
 
-            return Ok(menus);
+            return Ok(filterResponse);
         }
         catch (Exception ex)
         {
