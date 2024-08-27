@@ -1,13 +1,12 @@
 using Azure.Storage.Blobs;
 using Azure.Storage.Blobs.Models;
 using Microsoft.AspNetCore.Http;
-using TasteTrailData.Core.Venues.Models;
 using TasteTrailExperience.Core.Venues.Repositories;
 using TasteTrailExperience.Core.Venues.Services;
 
 namespace TasteTrailExperience.Infrastructure.Venues.Services;
 
-public class VenueLogoService : IVenueLogoService
+public class VenueImageService : IVenueImageService
 {
     private readonly BlobServiceClient _blobServiceClient;
 
@@ -15,22 +14,24 @@ public class VenueLogoService : IVenueLogoService
 
     private readonly string _defaultLogoUrl;
 
-    private readonly string _containerName = "venue-logos";
+    private readonly string _containerName = "venue-images";
 
-    public VenueLogoService(BlobServiceClient blobServiceClient, IVenueRepository venueRepository)
+    public VenueImageService(BlobServiceClient blobServiceClient, IVenueRepository venueRepository)
     {
         _blobServiceClient = blobServiceClient;
         _venueRepository = venueRepository;
-        _defaultLogoUrl = GetDefaultLogoUrl();
+        _defaultLogoUrl = GetDefaultImageUrl();
     }
 
-    public async Task<string> SetVenueLogo(int venueId, IFormFile? logo)
+    public async Task<string> SetImageAsync(int venueId, IFormFile? logo)
     {
         var venue = await _venueRepository.GetByIdAsync(venueId) ?? throw new ArgumentException($"Venue with ID {venueId} not found.");
 
         if (logo == null || logo.Length == 0)
         {
-            await _venueRepository.PatchLogoUrlPathAsync(venue, _defaultLogoUrl);
+            venue.LogoUrlPath = _defaultLogoUrl;
+            await _venueRepository.PutAsync(venue);
+
             return _defaultLogoUrl;
         }
 
@@ -47,12 +48,14 @@ public class VenueLogoService : IVenueLogoService
         }
 
         var logoUrl = blobClient.Uri.ToString();
-        await _venueRepository.PatchLogoUrlPathAsync(venue, logoUrl);
+
+        venue.LogoUrlPath = logoUrl;
+        await _venueRepository.PutAsync(venue);
 
         return logoUrl;
     }
 
-    public async Task<string> DeleteVenueLogoAsync(int venueId)
+    public async Task<string> DeleteImageAsync(int venueId)
     {
         var venue = await _venueRepository.GetByIdAsync(venueId) ?? throw new ArgumentException($"Venue with ID {venueId} not found.");
 
@@ -67,15 +70,16 @@ public class VenueLogoService : IVenueLogoService
             await blobClient.DeleteIfExistsAsync();
         }
 
-        await _venueRepository.PatchLogoUrlPathAsync(venue, _defaultLogoUrl);
+        venue.LogoUrlPath = _defaultLogoUrl;
+        await _venueRepository.PutAsync(venue);
 
-        return venue.LogoUrlPath!;
+        return venue.LogoUrlPath;
     }
 
-    private string GetDefaultLogoUrl()
+    public string GetDefaultImageUrl()
     {
         var containerClient = _blobServiceClient.GetBlobContainerClient(_containerName);
-        var defaultLogoBlobName = "default-logo.png";
+        var defaultLogoBlobName = "default-image.png";
 
         var blobClient = containerClient.GetBlobClient(defaultLogoBlobName);
         

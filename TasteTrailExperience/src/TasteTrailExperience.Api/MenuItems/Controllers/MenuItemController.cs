@@ -59,7 +59,7 @@ public class MenuItemController : ControllerBase
 
     [HttpPost]
     [Authorize]
-    public async Task<IActionResult> CreateAsync(MenuItemCreateDto menu)
+    public async Task<IActionResult> CreateAsync([FromForm] MenuItemCreateDto menu, IFormFile? logo)
     {
         try
         {
@@ -108,7 +108,7 @@ public class MenuItemController : ControllerBase
 
     [HttpPut]
     [Authorize]
-    public async Task<IActionResult> UpdateAsync(MenuItemUpdateDto venue)
+    public async Task<IActionResult> UpdateAsync([FromForm] MenuItemUpdateDto venue, IFormFile? logo)
     {
         try
         {

@@ -27,7 +27,7 @@ public static class RegisterDependencyInjectionMethod
         serviceCollection.AddTransient<IFeedbackRepository, FeedbackEfCoreRepository>();
 
         serviceCollection.AddTransient<IVenueService, VenueService>();
-        serviceCollection.AddTransient<IVenueLogoService, VenueLogoService>();
+        serviceCollection.AddTransient<IVenueImageService, VenueImageService>();
         serviceCollection.AddTransient<IMenuService, MenuService>();
         serviceCollection.AddTransient<IMenuItemService, MenuItemService>();
         serviceCollection.AddTransient<IFeedbackService, FeedbackService>();

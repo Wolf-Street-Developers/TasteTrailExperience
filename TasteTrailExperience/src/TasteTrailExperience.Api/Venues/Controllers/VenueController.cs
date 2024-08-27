@@ -16,11 +16,11 @@ public class VenueController : Controller
 {
     private readonly IVenueService _venueService;
 
-    private readonly IVenueLogoService _venueLogoService;
+    private readonly IVenueImageService _venueLogoService;
 
     private readonly UserManager<User> _userManager;
 
-    public VenueController(IVenueService venueService, UserManager<User> userManager, IVenueLogoService venueLogoService)
+    public VenueController(IVenueService venueService, UserManager<User> userManager, IVenueImageService venueLogoService)
     {
         _venueService = venueService;
         _userManager = userManager;
@@ -84,7 +84,7 @@ public class VenueController : Controller
             var user = await _userManager.GetUserAsync(User);
             var venueId = await _venueService.CreateVenueAsync(venue, user!);
 
-            await _venueLogoService.SetVenueLogo(venueId, logo);
+            await _venueLogoService.SetImageAsync(venueId, logo);
 
             return Ok(venueId);
         }
@@ -113,7 +113,7 @@ public class VenueController : Controller
             if (venue == null)
                 return NotFound(id);
 
-            await _venueLogoService.DeleteVenueLogoAsync(venue.Id);
+            await _venueLogoService.DeleteImageAsync(venue.Id);
 
             var user = await _userManager.GetUserAsync(User);
             var venueId = await _venueService.DeleteVenueByIdAsync(venue.Id, user!);
@@ -142,7 +142,7 @@ public class VenueController : Controller
             if (venueId is null)
                 return NotFound(venueId);
 
-            await _venueLogoService.SetVenueLogo((int)venueId, logo);
+            await _venueLogoService.SetImageAsync((int)venueId, logo);
 
             return Ok(venueId);
         }
