@@ -51,6 +51,12 @@ public class FeedbackEfCoreRepository : IFeedbackRepository
         return await query.CountAsync();
     }
 
+    public async Task<decimal> GetAverageRatingAsync(int venueId) {
+        return await _dbContext.Feedbacks
+            .Where(f => f.VenueId == venueId)
+            .AverageAsync(f => f.Rating);
+    }
+
     public async Task<int> CreateAsync(Feedback feedback)
     {
         ArgumentNullException.ThrowIfNull(feedback);

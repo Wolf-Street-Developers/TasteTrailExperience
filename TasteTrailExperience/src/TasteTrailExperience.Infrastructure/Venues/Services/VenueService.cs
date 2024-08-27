@@ -1,3 +1,4 @@
+using TasteTrailData.Core.Filters.Enums;
 using TasteTrailData.Core.Filters.Specifications;
 using TasteTrailData.Core.Users.Models;
 using TasteTrailData.Core.Venues.Models;
@@ -6,6 +7,7 @@ using TasteTrailExperience.Core.Common.Exceptions;
 using TasteTrailExperience.Core.Venues.Dtos;
 using TasteTrailExperience.Core.Venues.Repositories;
 using TasteTrailExperience.Core.Venues.Services;
+using TasteTrailExperience.Infrastructure.Venues.Factories;
 
 namespace TasteTrailExperience.Infrastructure.Venues.Services;
 
@@ -23,8 +25,8 @@ public class VenueService : IVenueService
         var newFilterParameters = new FilterParameters<Venue>() {
             PageNumber = filterParameters.PageNumber,
             PageSize = filterParameters.PageSize,
-            Specification = null,
-            SearchTerm = null
+            Specification = VenueFilterFactory.CreateFilter(filterParameters.Type),
+            SearchTerm = filterParameters.SearchTerm
         };
 
         var venues = await _venueRepository.GetFilteredAsync(newFilterParameters);
@@ -37,7 +39,7 @@ public class VenueService : IVenueService
             CurrentPage = filterParameters.PageNumber,
             AmountOfPages = totalPages,
             AmountOfEntities = totalVenues,
-            Entities = venues
+            Entities = venues,
         };
 
         return filterReponse;
@@ -49,7 +51,6 @@ public class VenueService : IVenueService
             throw new ArgumentException($"Invalid ID value: {id}.");
 
         var venue = await _venueRepository.GetByIdAsync(id);
-
         return venue;
     }
 
@@ -67,7 +68,8 @@ public class VenueService : IVenueService
             Email = venue.Email,
             ContactNumber = venue.ContactNumber,
             AveragePrice = venue.AveragePrice,
-            UserId = user.Id
+            UserId = user.Id,
+            CreationDate = DateTime.UtcNow,
         };
 
         var venueId = await _venueRepository.CreateAsync(newVenue);
@@ -111,7 +113,8 @@ public class VenueService : IVenueService
             Email = venue.Email,
             ContactNumber = venue.ContactNumber,
             AveragePrice = venue.AveragePrice,
-            UserId = user.Id
+            UserId = user.Id,
+            CreationDate = DateTime.UtcNow,
         };
 
         var venueId = await _venueRepository.PutAsync(updatedVenue);

@@ -24,6 +24,15 @@ public class MenuItemEfCoreRepository : IMenuItemRepository
         if (parameters.Specification is not null)
             query = parameters.Specification.Apply(query);
 
+
+        if (parameters.SearchTerm is not null)
+        {
+            query = query.Where(mi =>
+                (mi.Name != null && mi.Name.Contains(parameters.SearchTerm, StringComparison.CurrentCultureIgnoreCase)) ||
+                (mi.Description != null && mi.Description.Contains(parameters.SearchTerm, StringComparison.CurrentCultureIgnoreCase))
+            );
+        }   
+        
         query = query.Skip((parameters.PageNumber - 1) * parameters.PageSize).Take(parameters.PageSize);
 
         return await query.ToListAsync();

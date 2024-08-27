@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using TasteTrailData.Api.Common.Extensions.Controllers;
+using TasteTrailData.Core.Filters.Enums;
 using TasteTrailData.Core.Users.Models;
 using TasteTrailData.Infrastructure.Filters.Dtos;
 using TasteTrailExperience.Core.Common.Exceptions;

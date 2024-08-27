@@ -25,7 +25,7 @@ public class MenuItemService : IMenuItemService
 
     
 
-    public async Task<FilterResponseDto<MenuItem>> GetMenuItemsFilteredAsync(FilterParametersDto filterParameters, int menuId)
+    public async Task<FilterResponseDto<MenuItem>> GetMenuItemsFilteredAsync(FilterParametersSearchDto filterParameters, int menuId)
     {
         if (menuId <= 0)
             throw new ArgumentException($"Invalid Venue ID: {menuId}.");
@@ -34,7 +34,7 @@ public class MenuItemService : IMenuItemService
             PageNumber = filterParameters.PageNumber,
             PageSize = filterParameters.PageSize,
             Specification = MenuItemFilterFactory.CreateFilter(filterParameters.Type),
-            SearchTerm = null
+            SearchTerm = filterParameters.SearchTerm
         };
 
         var menuItems = await _menuItemRepository.GetFilteredByIdAsync(newFilterParameters, menuId);

@@ -25,7 +25,7 @@ public class MenuItemController : ControllerBase
     }
 
     [HttpPost("{menuId}")]
-    public async Task<IActionResult> GetFilteredAsync(FilterParametersDto filterParameters, int menuId)
+    public async Task<IActionResult> GetFilteredAsync(FilterParametersSearchDto filterParameters, int menuId)
     {
         try 
         {

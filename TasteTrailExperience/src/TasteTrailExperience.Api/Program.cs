@@ -14,21 +14,6 @@ builder.Services.InitAspnetIdentity(builder.Configuration);
 builder.Services.InitAuth(builder.Configuration);
 builder.Services.InitSwagger();
 
-builder.Services.AddCors(options =>
-{
-    options.AddPolicy("AllowAllOrigins", builder =>
-    {
-        builder.WithOrigins(
-            "http://localhost",
-            "http://localhost:5137",
-            "http://20.218.160.138:80",
-            "http://20.218.160.138"
-        )
-        .AllowAnyHeader()
-        .AllowAnyMethod();
-    });
-});
-
 builder.Services.RegisterBlobStorage(builder.Configuration);
 builder.Services.RegisterDependencyInjection();
 

@@ -54,7 +54,7 @@ public class FeedbackService : IFeedbackService
             {
                 Id = feedback.Id,
                 Text = feedback.Text,
-                Rating = feedback.Rating,
+                Rating = (int)feedback.Rating,
                 CreationDate = feedback.CreationDate,
                 Username = user.UserName!,
                 UserId = user.Id,
@@ -97,7 +97,7 @@ public class FeedbackService : IFeedbackService
         {
             Id = feedback.Id,
             Text = feedback.Text,
-            Rating = feedback.Rating,
+            Rating = (int)feedback.Rating,
             CreationDate = feedback.CreationDate,
             Username = user.UserName!,
             UserId = user.Id,
@@ -187,7 +187,9 @@ public class FeedbackService : IFeedbackService
         if (venue is null)
             throw new ArgumentNullException(nameof(venueId));
 
-        // venue.Rating = (float)Math.Round(venue.Feedbacks.Average(f => f.Rating), 2);
+
+        var averageRating = await _feedbackRepository.GetAverageRatingAsync(venue.Id);
+        venue.Rating = Math.Round(averageRating, 2);
 
         await _venueRepository.PutAsync(venue);
     }

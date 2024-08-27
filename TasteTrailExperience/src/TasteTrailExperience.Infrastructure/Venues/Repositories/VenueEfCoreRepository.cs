@@ -22,6 +22,16 @@ public class VenueEfCoreRepository : IVenueRepository
         if (parameters.Specification is not null)
             query = parameters.Specification.Apply(query);
 
+        if (parameters.SearchTerm is not null)
+        {
+            var searchTerm = $"%{parameters.SearchTerm.ToLower()}%";
+
+            query = query.Where(mi =>
+                (mi.Name != null && EF.Functions.Like(mi.Name.ToLower(), searchTerm)) ||
+                (mi.Description != null && EF.Functions.Like(mi.Description.ToLower(), searchTerm))
+            );
+        }
+
         query = query.Skip((parameters.PageNumber - 1) * parameters.PageSize).Take(parameters.PageSize);
 
         return await query.ToListAsync();

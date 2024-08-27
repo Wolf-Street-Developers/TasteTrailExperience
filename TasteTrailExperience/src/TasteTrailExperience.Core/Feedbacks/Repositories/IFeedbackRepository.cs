@@ -7,5 +7,5 @@ public interface IFeedbackRepository : IGetFilteredByIdAsync<Feedback, int>, IGe
 IGetCountBySpecificationIdAsync<Feedback, int>, IGetByIdAsync<Feedback?, int>,
 ICreateAsync<Feedback, int>, IDeleteByIdAsync<int, int?>, IPutAsync<Feedback, int?>
 {
-    
+    public Task<decimal> GetAverageRatingAsync(int venueId);
 }
