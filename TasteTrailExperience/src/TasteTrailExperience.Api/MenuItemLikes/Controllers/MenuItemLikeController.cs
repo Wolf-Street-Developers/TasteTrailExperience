@@ -4,34 +4,34 @@ using Microsoft.AspNetCore.Mvc;
 using TasteTrailData.Api.Common.Extensions.Controllers;
 using TasteTrailData.Core.Users.Models;
 using TasteTrailExperience.Core.Common.Exceptions;
-using TasteTrailExperience.Core.FeedbackLikes.Dtos;
-using TasteTrailExperience.Core.FeedbackLikes.Services;
+using TasteTrailExperience.Core.MenuItemLikes.Dtos;
+using TasteTrailExperience.Core.MenuItemLikes.Services;
 
-namespace TasteTrailExperience.Api.FeedbackLikes.Controllers;
+namespace TasteTrailExperience.Api.MenuItemLikes.Controllers;
 
 [ApiController]
 [Route("api/[controller]")]
-public class FeedbackLikeController : ControllerBase
+public class MenuItemLikeController : ControllerBase
 {
-    private readonly IFeedbackLikeService _feedbackLikeService;
+    private readonly IMenuItemLikeService _menuItemLikeService;
     private readonly UserManager<User> _userManager;
 
-    public FeedbackLikeController(IFeedbackLikeService feedbackLikeService, UserManager<User> userManager)
+    public MenuItemLikeController(IMenuItemLikeService menuItemLikeService, UserManager<User> userManager)
     {
-        _feedbackLikeService = feedbackLikeService;
+        _menuItemLikeService = menuItemLikeService;
         _userManager = userManager;
     }
 
     [HttpPost]
     [Authorize]
-    public async Task<IActionResult> CreateAsync([FromForm] FeedbackLikeCreateDto feedbackLike)
+    public async Task<IActionResult> CreateAsync([FromForm] MenuItemLikeCreateDto menuItemLike, IFormFile? logo)
     {
         try
         {
             var user = await _userManager.GetUserAsync(User);
-            var feedbackLikeId = await _feedbackLikeService.CreateFeedbackLikeAsync(feedbackLike, user!);
+            var menuItemLikeId = await _menuItemLikeService.CreateMenuItemLikeAsync(menuItemLike, user!);
 
-            return Ok(feedbackLikeId);
+            return Ok(menuItemLikeId);
         }
         catch (ArgumentException ex)
         {
@@ -54,12 +54,12 @@ public class FeedbackLikeController : ControllerBase
         try
         {
             var user = await _userManager.GetUserAsync(User);
-            var feedbackLikeId = await _feedbackLikeService.DeleteFeedbackLikeByIdAsync(id, user!);
+            var menuItemLikeId = await _menuItemLikeService.DeleteMenuItemLikeByIdAsync(id, user!);
 
-            if (feedbackLikeId is null)
-                return NotFound(feedbackLikeId);
+            if (menuItemLikeId is null)
+                return NotFound(menuItemLikeId);
 
-            return Ok(feedbackLikeId);
+            return Ok(menuItemLikeId);
         }
         catch (ForbiddenAccessException)
         {
