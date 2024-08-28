@@ -19,7 +19,7 @@ public class VenueFilterFactory
             FilterType.OldestFirst => new OldestFirstFilter<Venue>(),
             FilterType.HighestRated => new HighestRatedFilter<Venue>(),
             FilterType.LowestRated => new LowestRatedFilter<Venue>(),
-            _ => throw new ArgumentException("Invalid filter type", nameof(filterType))
+            _ => throw new ArgumentException("Invalid filter type", filterType.ToString())
         };
     }
 }

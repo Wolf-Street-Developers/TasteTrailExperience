@@ -15,7 +15,7 @@ public class MenuItemFilterFactory
         return filterType switch
         {
             FilterType.MostLiked => new MostLikedFilter<MenuItem>(),
-            _ => throw new ArgumentException("Invalid filter type", nameof(filterType))
+            _ => throw new ArgumentException("Invalid filter type", filterType.ToString())
         };
     }
 }

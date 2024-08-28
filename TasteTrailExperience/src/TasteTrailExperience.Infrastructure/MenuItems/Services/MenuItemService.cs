@@ -72,7 +72,6 @@ public class MenuItemService : IMenuItemService
             Name = menuItem.Name,
             Description = menuItem.Description,
             Price = menuItem.Price,
-            PopularityRate = menuItem.PopularityRate,
             MenuId = menu.Id,
             UserId = user.Id
         };
@@ -115,8 +114,8 @@ public class MenuItemService : IMenuItemService
             Name = menuItem.Name,
             Description = menuItem.Description,
             Price = menuItem.Price,
-            PopularityRate = menuItem.PopularityRate,
-            UserId = user.Id
+            UserId = user.Id,
+            MenuId = menuItemToUpdate.MenuId
         };
 
         var menuItemId = await _menuItemRepository.PutAsync(updatedMenuItem);

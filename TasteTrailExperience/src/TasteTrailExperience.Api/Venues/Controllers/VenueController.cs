@@ -7,6 +7,7 @@ using TasteTrailData.Infrastructure.Filters.Dtos;
 using TasteTrailExperience.Core.Common.Exceptions;
 using TasteTrailExperience.Core.Venues.Dtos;
 using TasteTrailExperience.Core.Venues.Services;
+using TasteTrailExperience.Infrastructure.Venues.Managers;
 
 namespace TasteTrailExperience.Api.Venues.Controllers;
 
@@ -16,15 +17,15 @@ public class VenueController : Controller
 {
     private readonly IVenueService _venueService;
 
-    private readonly IVenueImageService _venueLogoService;
+    private readonly VenueImageManager _venueImageManager;
 
     private readonly UserManager<User> _userManager;
 
-    public VenueController(IVenueService venueService, UserManager<User> userManager, IVenueImageService venueLogoService)
+    public VenueController(IVenueService venueService, UserManager<User> userManager, VenueImageManager venueImageManager)
     {
         _venueService = venueService;
         _userManager = userManager;
-        _venueLogoService = venueLogoService;
+        _venueImageManager = venueImageManager;
     }
 
     [HttpPost]
@@ -84,7 +85,7 @@ public class VenueController : Controller
             var user = await _userManager.GetUserAsync(User);
             var venueId = await _venueService.CreateVenueAsync(venue, user!);
 
-            await _venueLogoService.SetImageAsync(venueId, logo);
+            await _venueImageManager.SetImageAsync(venueId, logo);
 
             return Ok(venueId);
         }
@@ -108,14 +109,13 @@ public class VenueController : Controller
     {
         try
         {
+            var user = await _userManager.GetUserAsync(User);
             var venue = await _venueService.GetVenueByIdAsync(id);
 
-            if (venue == null)
+            if (venue is null)
                 return NotFound(id);
 
-            await _venueLogoService.DeleteImageAsync(venue.Id);
-
-            var user = await _userManager.GetUserAsync(User);
+            await _venueImageManager.DeleteImageAsync(venue.Id);
             var venueId = await _venueService.DeleteVenueByIdAsync(venue.Id, user!);
 
             return Ok(venueId);
@@ -142,7 +142,7 @@ public class VenueController : Controller
             if (venueId is null)
                 return NotFound(venueId);
 
-            await _venueLogoService.SetImageAsync((int)venueId, logo);
+            await _venueImageManager.SetImageAsync((int)venueId, logo);
 
             return Ok(venueId);
         }

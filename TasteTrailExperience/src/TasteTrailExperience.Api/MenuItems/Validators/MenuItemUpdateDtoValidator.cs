@@ -22,9 +22,5 @@ public class MenuItemUpdateDtoValidator : AbstractValidator<MenuItemUpdateDto>
             .NotEmpty()
             .GreaterThanOrEqualTo(0)
             .LessThanOrEqualTo(10000);
-
-        RuleFor(mi => mi.PopularityRate)
-            .GreaterThanOrEqualTo(0)
-            .LessThanOrEqualTo(100);
     }
 }

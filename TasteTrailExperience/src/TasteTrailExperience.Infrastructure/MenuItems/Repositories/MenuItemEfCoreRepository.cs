@@ -93,7 +93,6 @@ public class MenuItemEfCoreRepository : IMenuItemRepository
         menuItemToUpdate.Name = menuItem.Name;
         menuItemToUpdate.Description = menuItem.Description;
         menuItemToUpdate.Price = menuItem.Price;
-        menuItemToUpdate.PopularityRate = menuItem.PopularityRate;
 
         await _dbContext.SaveChangesAsync();
 

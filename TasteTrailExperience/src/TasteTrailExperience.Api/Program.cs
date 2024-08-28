@@ -25,8 +25,8 @@ builder.Services.AddSwaggerGen();
 builder.Services.AddValidatorsFromAssembly(Assembly.GetExecutingAssembly());
 
 var assembly = Assembly.GetAssembly(typeof(ApiAssemblyMarker)) ?? throw new InvalidOperationException("Unable to load the assembly containing ApiAssemblyMarker.");
-builder.Services.AddValidatorsFromAssembly(assembly);
 
+builder.Services.AddValidatorsFromAssembly(assembly);
 builder.Services.AddFluentValidationAutoValidation();
 
 var app = builder.Build();

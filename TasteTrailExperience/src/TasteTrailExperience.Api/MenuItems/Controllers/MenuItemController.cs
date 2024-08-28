@@ -7,6 +7,7 @@ using TasteTrailData.Infrastructure.Filters.Dtos;
 using TasteTrailExperience.Core.Common.Exceptions;
 using TasteTrailExperience.Core.MenuItems.Dtos;
 using TasteTrailExperience.Core.MenuItems.Services;
+using TasteTrailExperience.Infrastructure.MenuItems.Managers;
 
 namespace TasteTrailExperience.Api.MenuItems.Controllers;
 
@@ -16,12 +17,15 @@ public class MenuItemController : ControllerBase
 {
     private readonly IMenuItemService _menuItemService;
 
+    private readonly MenuItemImageManager _menuItemImageManager;
+
     private readonly UserManager<User> _userManager;
 
-    public MenuItemController(IMenuItemService menuItemService, UserManager<User> userManager)
+    public MenuItemController(IMenuItemService menuItemService, UserManager<User> userManager, MenuItemImageManager menuItemImageManager)
     {
         _menuItemService = menuItemService;
         _userManager = userManager;
+        _menuItemImageManager = menuItemImageManager;
     }
 
     [HttpPost("{menuId}")]
@@ -66,6 +70,8 @@ public class MenuItemController : ControllerBase
             var user = await _userManager.GetUserAsync(User);
             var menuItemId = await _menuItemService.CreateMenuItemAsync(menu, user!);
 
+            await _menuItemImageManager.SetImageAsync(menuItemId, logo);
+
             return Ok(menuItemId);
         }
         catch (ArgumentException ex)
@@ -89,10 +95,13 @@ public class MenuItemController : ControllerBase
         try
         {
             var user = await _userManager.GetUserAsync(User);
-            var menuItemId = await _menuItemService.DeleteMenuItemByIdAsync(id, user!);
+            var menuItem = await _menuItemService.GetMenuItemByIdAsync(id);
 
-            if (menuItemId is null)
-                return NotFound(menuItemId);
+            if (menuItem is null)
+                return NotFound(id);
+
+            await _menuItemImageManager.DeleteImageAsync(menuItem.Id);
+            var menuItemId = await _menuItemService.DeleteMenuItemByIdAsync(id, user!);
 
             return Ok(menuItemId);
         }
@@ -117,6 +126,8 @@ public class MenuItemController : ControllerBase
 
             if (menuItemId is null)
                 return NotFound(menuItemId);
+
+            await _menuItemImageManager.SetImageAsync((int)menuItemId, logo);
 
             return Ok(menuItemId);
         }

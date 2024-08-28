@@ -2,7 +2,6 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using TasteTrailData.Api.Common.Extensions.Controllers;
-using TasteTrailData.Core.Filters.Enums;
 using TasteTrailData.Core.Users.Models;
 using TasteTrailData.Infrastructure.Filters.Dtos;
 using TasteTrailExperience.Core.Common.Exceptions;
@@ -19,10 +18,13 @@ public class MenuController : ControllerBase
 
     private readonly UserManager<User> _userManager;
 
-    public MenuController(IMenuService menuService, UserManager<User> userManager)
+    private readonly MenuImageManager _menuImageManager;
+
+    public MenuController(IMenuService menuService, UserManager<User> userManager, MenuImageManager menuImageManager)
     {
         _menuService = menuService;
         _userManager = userManager;
+        _menuImageManager = menuImageManager;
     }
 
     [HttpPost("{venueId}")]
@@ -60,12 +62,14 @@ public class MenuController : ControllerBase
 
     [HttpPost]
     [Authorize]
-    public async Task<IActionResult> CreateAsync([FromForm] MenuCreateDto menu, IFormFile? logo)
+    public async Task<IActionResult> CreateAsync([FromForm] MenuCreateDto menu, IFormFile? image)
     {
         try
         {
             var user = await _userManager.GetUserAsync(User);
             var menuId = await _menuService.CreateMenuAsync(menu, user!);
+
+            await _menuImageManager.SetImageAsync(menuId, image);
 
             return Ok(menuId);
         }
@@ -90,10 +94,14 @@ public class MenuController : ControllerBase
         try
         {
             var user = await _userManager.GetUserAsync(User);
-            var menuId = await _menuService.DeleteMenuByIdAsync(id, user!);
+            var menu = await _menuService.GetMenuByIdAsync(id);
 
-            if (menuId is null)
-                return NotFound(menuId);
+            if (menu is null)
+                return NotFound(id);
+
+            
+            await _menuImageManager.DeleteImageAsync(menu.Id);
+            var menuId = await _menuService.DeleteMenuByIdAsync(id, user!);
 
             return Ok(menuId);
         }
@@ -109,7 +117,7 @@ public class MenuController : ControllerBase
 
     [HttpPut]
     [Authorize]
-    public async Task<IActionResult> UpdateAsync([FromForm] MenuUpdateDto venue, IFormFile? logo)
+    public async Task<IActionResult> UpdateAsync([FromForm] MenuUpdateDto venue, IFormFile? image)
     {
         try
         {
@@ -118,6 +126,8 @@ public class MenuController : ControllerBase
 
             if (menuId is null)
                 return NotFound(menuId);
+
+            await _menuImageManager.SetImageAsync((int)menuId, image);
 
             return Ok(menuId);
         }

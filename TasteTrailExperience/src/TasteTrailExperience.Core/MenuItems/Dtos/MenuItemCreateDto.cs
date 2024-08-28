@@ -8,7 +8,5 @@ public class MenuItemCreateDto
 
     public float Price { get; set; }
 
-    public int PopularityRate { get; set; }
-
     public int MenuId { get; set; }
 }

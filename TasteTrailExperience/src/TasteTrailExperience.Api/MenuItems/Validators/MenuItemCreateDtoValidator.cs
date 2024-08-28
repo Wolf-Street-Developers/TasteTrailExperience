@@ -19,10 +19,6 @@ public class MenuItemCreateDtoValidator : AbstractValidator<MenuItemCreateDto>
             .GreaterThan(0)
             .LessThanOrEqualTo(10000);
 
-        RuleFor(mi => mi.PopularityRate)
-            .GreaterThanOrEqualTo(0)
-            .LessThanOrEqualTo(100);
-
         RuleFor(mi => mi.MenuId)
             .NotEmpty()
             .GreaterThan(0);

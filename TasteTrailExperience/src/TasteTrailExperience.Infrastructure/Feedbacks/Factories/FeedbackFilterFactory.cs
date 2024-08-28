@@ -19,7 +19,7 @@ public class FeedbackFilterFactory
             FilterType.OldestFirst => new OldestFirstFilter<Feedback>(),
             FilterType.HighestRated => new HighestRatedFilter<Feedback>(),
             FilterType.LowestRated => new LowestRatedFilter<Feedback>(),
-            _ => throw new ArgumentException("Invalid filter type", nameof(filterType))
+            _ => throw new ArgumentException("Invalid filter type", filterType.ToString())
         };
     }
 }

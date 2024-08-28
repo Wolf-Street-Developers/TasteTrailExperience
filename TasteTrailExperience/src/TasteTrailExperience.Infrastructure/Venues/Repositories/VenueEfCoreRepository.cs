@@ -95,7 +95,6 @@ public class VenueEfCoreRepository : IVenueRepository
         venueToUpdate.Address = venue.Address;
         venueToUpdate.ContactNumber = venue.ContactNumber;
         venueToUpdate.Email = venue.Email;
-        venueToUpdate.LogoUrlPath = venue.LogoUrlPath;
         venueToUpdate.AveragePrice = venue.AveragePrice;
 
         await _dbContext.SaveChangesAsync();
