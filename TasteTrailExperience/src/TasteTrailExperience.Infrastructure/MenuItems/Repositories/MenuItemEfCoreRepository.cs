@@ -105,4 +105,37 @@ public class MenuItemEfCoreRepository : IMenuItemRepository
             .AsNoTracking()
             .FirstOrDefaultAsync(f => f.Id == id);
     }
+
+    public async Task<int?> IncrementLikesAsync(MenuItem menuItem)
+    {
+        var menuItemToUpdate = await _dbContext.MenuItems
+            .FirstOrDefaultAsync(mi => mi.Id == menuItem.Id);
+
+        if (menuItemToUpdate is null)
+            return null;
+
+        
+        menuItemToUpdate.Likes++;
+
+        await _dbContext.SaveChangesAsync();
+
+        return menuItem.Id;
+    }
+
+    public async Task<int?> DecrementLikesAsync(MenuItem menuItem)
+    {
+        var menuItemToUpdate = await _dbContext.MenuItems
+            .FirstOrDefaultAsync(mi => mi.Id == menuItem.Id);
+
+        if (menuItemToUpdate is null)
+            return null;
+
+        
+        menuItemToUpdate.Likes++;
+
+        await _dbContext.SaveChangesAsync();
+
+        return menuItem.Id;
+    }
+
 }

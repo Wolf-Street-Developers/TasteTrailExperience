@@ -6,6 +6,6 @@ namespace TasteTrailExperience.Core.MenuItems.Repositories;
 public interface IMenuItemRepository : IGetFilteredByIdAsync<MenuItem, int>, IGetAsNoTrackingAsync<MenuItem?, int>, 
 IGetCountBySpecificationIdAsync<MenuItem, int>, IGetByIdAsync<MenuItem?, int>,
 ICreateAsync<MenuItem, int>, IDeleteByIdAsync<int, int?>, IPutAsync<MenuItem, int?>,
-IIncrementLikesAsync<MenuItem, int>, IDecrementLikesAsync<MenuItem, int> 
+IIncrementLikesAsync<MenuItem, int?>, IDecrementLikesAsync<MenuItem, int?> 
 {
 }
