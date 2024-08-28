@@ -42,4 +42,11 @@ public class MenuItemLikeEfCoreRepository : IMenuItemLikeRepository
 
         return id;
     }
+
+    public async Task<MenuItemLike?> GetAsNoTrackingAsync(int id)
+    {
+        return await _dbContext.MenuItemLikes
+            .AsNoTracking()
+            .FirstOrDefaultAsync(f => f.Id == id);
+    }
 }

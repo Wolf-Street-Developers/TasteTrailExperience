@@ -42,4 +42,11 @@ public class FeedbackLikeEfCoreRepository : IFeedbackLikeRepository
 
         return id;
     }
+
+    public async Task<FeedbackLike?> GetAsNoTrackingAsync(int id)
+    {
+        return await _dbContext.FeedbackLikes
+            .AsNoTracking()
+            .FirstOrDefaultAsync(f => f.Id == id);
+    }
 }

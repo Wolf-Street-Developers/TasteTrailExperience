@@ -5,7 +5,7 @@ namespace TasteTrailExperience.Core.FeedbackLikes.Services;
 
 public interface IFeedbackLikeService
 {
-    Task<int> CreateFeedbackLikeAsync(FeedbackLikeCreateDto menuItem, User user);
+    Task<int> CreateFeedbackLikeAsync(FeedbackLikeCreateDto feedbackLikeCreateDto, User user);
 
     Task<int?> DeleteFeedbackLikeByIdAsync(int id, User user);
 }
