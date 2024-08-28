@@ -104,4 +104,37 @@ public class FeedbackEfCoreRepository : IFeedbackRepository
             .AsNoTracking()
             .FirstOrDefaultAsync(f => f.Id == id);
     }
+
+    public async Task<int?> IncrementLikesAsync(Feedback feedback)
+    {
+        var feedbackToUpdate = await _dbContext.Feedbacks
+            .FirstOrDefaultAsync(mi => mi.Id == feedback.Id);
+
+        if (feedbackToUpdate is null)
+            return null;
+
+        
+        feedbackToUpdate.Likes++;
+
+        await _dbContext.SaveChangesAsync();
+
+        return feedback.Id;
+    }
+
+    public async Task<int?> DecrementLikesAsync(Feedback feedback)
+    {
+        var feedbackToUpdate = await _dbContext.Feedbacks
+            .FirstOrDefaultAsync(mi => mi.Id == feedback.Id);
+
+        if (feedbackToUpdate is null)
+            return null;
+
+        
+        feedbackToUpdate.Likes--;
+
+        await _dbContext.SaveChangesAsync();
+
+        return feedback.Id;
+    }
+
 }

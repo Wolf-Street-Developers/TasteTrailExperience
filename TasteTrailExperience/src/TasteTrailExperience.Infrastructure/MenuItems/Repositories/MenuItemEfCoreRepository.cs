@@ -131,7 +131,7 @@ public class MenuItemEfCoreRepository : IMenuItemRepository
             return null;
 
         
-        menuItemToUpdate.Likes++;
+        menuItemToUpdate.Likes--;
 
         await _dbContext.SaveChangesAsync();
 
