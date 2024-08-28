@@ -24,7 +24,7 @@ public class MenuItemLikeController : ControllerBase
 
     [HttpPost]
     [Authorize]
-    public async Task<IActionResult> CreateAsync([FromForm] MenuItemLikeCreateDto menuItemLike, IFormFile? logo)
+    public async Task<IActionResult> CreateAsync([FromForm] MenuItemLikeCreateDto menuItemLike)
     {
         try
         {
