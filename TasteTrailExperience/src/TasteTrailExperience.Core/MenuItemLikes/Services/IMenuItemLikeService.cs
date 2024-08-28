@@ -1,4 +1,3 @@
-using TasteTrailData.Core.MenuItemLikes.Models;
 using TasteTrailData.Core.Users.Models;
 using TasteTrailExperience.Core.MenuItemLikes.Dtos;
 
