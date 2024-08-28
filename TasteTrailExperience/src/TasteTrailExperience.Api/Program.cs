@@ -13,6 +13,7 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.InitAspnetIdentity(builder.Configuration);
 builder.Services.InitAuth(builder.Configuration);
 builder.Services.InitSwagger();
+builder.Services.InitCors();
 
 builder.Services.RegisterBlobStorage(builder.Configuration);
 builder.Services.RegisterDependencyInjection();
@@ -41,7 +42,7 @@ app.MapControllers();
 
 app.UseAuthentication();
 app.UseAuthorization();
-app.UseCors("LocalHostPolicy");
+app.UseCors("AllowAllOrigins");
 
 app.UseHttpsRedirection();
 
