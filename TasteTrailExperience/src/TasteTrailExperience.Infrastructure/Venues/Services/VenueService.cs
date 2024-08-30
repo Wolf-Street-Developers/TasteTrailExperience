@@ -31,9 +31,8 @@ public class VenueService : IVenueService
 
         var venues = await _venueRepository.GetFilteredAsync(newFilterParameters);
 
-        var totalVenues = await _venueRepository.GetCountBySpecificationAsync(newFilterParameters.Specification);
+        var totalVenues = await _venueRepository.GetCountFilteredAsync(newFilterParameters);
         var totalPages = (int)Math.Ceiling(totalVenues / (double)filterParameters.PageSize);
-
 
         var filterReponse = new FilterResponseDto<Venue>() {
             CurrentPage = filterParameters.PageNumber,

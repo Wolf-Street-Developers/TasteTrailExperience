@@ -64,7 +64,7 @@ public class FeedbackService : IFeedbackService
             feedbackDtos.Add(feedbackDto);
         }
 
-        var totalFeedbacks = await _feedbackRepository.GetCountBySpecificationIdAsync(newFilterParameters.Specification, venueId);
+        var totalFeedbacks = await _feedbackRepository.GetCountFilteredIdAsync(newFilterParameters, venueId);
         var totalPages = (int)Math.Ceiling(totalFeedbacks / (double)filterParameters.PageSize);
 
 

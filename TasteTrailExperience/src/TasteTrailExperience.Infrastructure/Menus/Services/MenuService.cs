@@ -36,7 +36,7 @@ public class MenuService : IMenuService
 
         var menus = await _menuRepository.GetFilteredByIdAsync(newFilterParameters, venueId);
 
-        var totalMenus = await _menuRepository.GetCountBySpecificationIdAsync(newFilterParameters.Specification, venueId);
+        var totalMenus = await _menuRepository.GetCountFilteredIdAsync(newFilterParameters, venueId);
         var totalPages = (int)Math.Ceiling(totalMenus / (double)filterParameters.PageSize);
 
 

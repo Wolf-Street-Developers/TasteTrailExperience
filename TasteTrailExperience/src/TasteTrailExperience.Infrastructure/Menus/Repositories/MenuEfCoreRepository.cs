@@ -35,13 +35,16 @@ public class MenuEfCoreRepository : IMenuRepository
             .FirstOrDefaultAsync(m => m.Id == id);
     }
 
-    public async Task<int> GetCountBySpecificationIdAsync(IFilterSpecification<Menu>? specification, int venueId)
+    public async Task<int> GetCountFilteredIdAsync(FilterParameters<Menu>? parameters, int venueId)
     {
         var query = _dbContext.Menus.AsQueryable();
         query = query.Where(m => m.VenueId == venueId);
 
-        if (specification != null)
-            query = specification.Apply(query);
+        if (parameters is null)
+            return await query.CountAsync();
+
+        if (parameters.Specification != null)
+            query = parameters.Specification.Apply(query);
 
         return await query.CountAsync();
     }

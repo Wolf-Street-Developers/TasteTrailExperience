@@ -26,9 +26,9 @@ public class VenueEfCoreRepository : IVenueRepository
         {
             var searchTerm = $"%{parameters.SearchTerm.ToLower()}%";
 
-            query = query.Where(mi =>
-                (mi.Name != null && EF.Functions.Like(mi.Name.ToLower(), searchTerm)) ||
-                (mi.Description != null && EF.Functions.Like(mi.Description.ToLower(), searchTerm))
+            query = query.Where(v =>
+                (v.Name != null && EF.Functions.Like(v.Name.ToLower(), searchTerm)) ||
+                (v.Description != null && EF.Functions.Like(v.Description.ToLower(), searchTerm))
             );
         }
 
@@ -48,12 +48,25 @@ public class VenueEfCoreRepository : IVenueRepository
         return _dbContext.Venues.CountAsync();
     }
 
-    public async Task<int> GetCountBySpecificationAsync(IFilterSpecification<Venue>? specification)
+    public async Task<int> GetCountFilteredAsync(FilterParameters<Venue>? parameters)
     {
         var query = _dbContext.Venues.AsQueryable();
 
-        if (specification != null)
-            query = specification.Apply(query);
+        if (parameters is null)
+            return await query.CountAsync();
+
+        if (parameters.Specification is not null)
+            query = parameters.Specification.Apply(query);
+
+        if (parameters.SearchTerm is not null)
+        {
+            var searchTerm = $"%{parameters.SearchTerm.ToLower()}%";
+
+            query = query.Where(v =>
+                (v.Name != null && EF.Functions.Like(v.Name.ToLower(), searchTerm)) ||
+                (v.Description != null && EF.Functions.Like(v.Description.ToLower(), searchTerm))
+            );
+        }
 
         return await query.CountAsync();
     }

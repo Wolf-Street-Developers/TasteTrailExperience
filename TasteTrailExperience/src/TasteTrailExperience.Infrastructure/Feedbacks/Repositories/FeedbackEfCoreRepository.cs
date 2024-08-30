@@ -40,13 +40,16 @@ public class FeedbackEfCoreRepository : IFeedbackRepository
         return await _dbContext.Feedbacks.CountAsync();
     }
 
-    public async Task<int> GetCountBySpecificationIdAsync(IFilterSpecification<Feedback>? specification, int venueId)
+    public async Task<int> GetCountFilteredIdAsync(FilterParameters<Feedback>? parameters, int venueId)
     {
         var query = _dbContext.Feedbacks.AsQueryable();
         query = query.Where(f => f.VenueId == venueId);
 
-        if (specification != null)
-            query = specification.Apply(query);
+        if (parameters is null)
+            return await query.CountAsync();
+
+        if (parameters.Specification != null)
+            query = parameters.Specification.Apply(query);
 
         return await query.CountAsync();
     }
