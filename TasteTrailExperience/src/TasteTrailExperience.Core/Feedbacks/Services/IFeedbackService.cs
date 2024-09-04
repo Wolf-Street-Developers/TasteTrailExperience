@@ -8,6 +8,8 @@ public interface IFeedbackService
 {
     Task<FilterResponseDto<FeedbackGetDto>> GetFeedbacksFilteredAsync(FilterParametersDto filterParameters, int venueId);
 
+    Task<FilterResponseDto<FeedbackGetDto>> GetFeedbacksFilteredAsync(FilterParametersSearchDto filterParameters);
+
     Task<FeedbackGetDto?> GetFeedbackByIdAsync(int id);
 
     Task<int> GetFeedbacksCountAsync();

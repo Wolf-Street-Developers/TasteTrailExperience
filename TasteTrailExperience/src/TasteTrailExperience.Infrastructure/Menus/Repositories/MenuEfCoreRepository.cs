@@ -20,9 +20,25 @@ public class MenuEfCoreRepository : IMenuRepository
         IQueryable<Menu> query = _dbContext.Set<Menu>();
 
         query = query.Where(m => m.VenueId == venueId);
+        query = query.Skip((parameters.PageNumber - 1) * parameters.PageSize).Take(parameters.PageSize);
 
-        if (parameters.Specification is not null)
-            query = parameters.Specification.Apply(query);
+        return await query.ToListAsync();
+    }
+
+    
+    public async Task<List<Menu>> GetFilteredAsync(FilterParameters<Menu> parameters)
+    {
+        IQueryable<Menu> query = _dbContext.Set<Menu>();
+
+        if (parameters.SearchTerm is not null)
+        {
+            var searchTerm = $"%{parameters.SearchTerm.ToLower()}%";
+
+            query = query.Where(m =>
+                (m.Name != null && EF.Functions.Like(m.Name.ToLower(), searchTerm)) ||
+                (m.Description != null && EF.Functions.Like(m.Description.ToLower(), searchTerm))
+            );
+        }
 
         query = query.Skip((parameters.PageNumber - 1) * parameters.PageSize).Take(parameters.PageSize);
 
@@ -39,6 +55,19 @@ public class MenuEfCoreRepository : IMenuRepository
     {
         var query = _dbContext.Menus.AsQueryable();
         query = query.Where(m => m.VenueId == venueId);
+
+        if (parameters is null)
+            return await query.CountAsync();
+
+        if (parameters.Specification != null)
+            query = parameters.Specification.Apply(query);
+
+        return await query.CountAsync();
+    }
+    
+    public async Task<int> GetCountFilteredAsync(FilterParameters<Menu>? parameters)
+    {
+        var query = _dbContext.Menus.AsQueryable();
 
         if (parameters is null)
             return await query.CountAsync();

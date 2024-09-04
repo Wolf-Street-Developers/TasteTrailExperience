@@ -3,6 +3,7 @@ using TasteTrailData.Core.Menus.Models;
 using TasteTrailData.Core.Users.Models;
 using TasteTrailData.Infrastructure.Filters.Dtos;
 using TasteTrailExperience.Core.Common.Exceptions;
+using TasteTrailExperience.Core.Filters;
 using TasteTrailExperience.Core.Menus.Dtos;
 using TasteTrailExperience.Core.Menus.Repositories;
 using TasteTrailExperience.Core.Menus.Services;
@@ -22,14 +23,14 @@ public class MenuService : IMenuService
         _venueRepository = venueRepository;
     }
 
-    public async Task<FilterResponseDto<Menu>> GetMenusFilteredAsync(FilterParametersPaginationDto filterParameters, int venueId)
+    public async Task<FilterResponseDto<Menu>> GetMenusFilteredAsync(PaginationParametersDto paginationParameters, int venueId)
     {
         if (venueId <= 0)
             throw new ArgumentException($"Invalid Venue ID: {venueId}.");
 
         var newFilterParameters = new FilterParameters<Menu>() {
-            PageNumber = filterParameters.PageNumber,
-            PageSize = filterParameters.PageSize,
+            PageNumber = paginationParameters.PageNumber,
+            PageSize = paginationParameters.PageSize,
             Specification = null,
             SearchTerm = null
         };
@@ -37,11 +38,36 @@ public class MenuService : IMenuService
         var menus = await _menuRepository.GetFilteredByIdAsync(newFilterParameters, venueId);
 
         var totalMenus = await _menuRepository.GetCountFilteredIdAsync(newFilterParameters, venueId);
-        var totalPages = (int)Math.Ceiling(totalMenus / (double)filterParameters.PageSize);
+        var totalPages = (int)Math.Ceiling(totalMenus / (double)paginationParameters.PageSize);
 
 
         var filterReponse = new FilterResponseDto<Menu>() {
-            CurrentPage = filterParameters.PageNumber,
+            CurrentPage = paginationParameters.PageNumber,
+            AmountOfPages = totalPages,
+            AmountOfEntities = totalMenus,
+            Entities = menus
+        };
+
+        return filterReponse;
+    }
+
+    public async Task<FilterResponseDto<Menu>> GetMenusFilteredAsync(PaginationSearchParametersDto paginationSearchParameters)
+    {
+        var newFilterParameters = new FilterParameters<Menu>() {
+            PageNumber = paginationSearchParameters.PageNumber,
+            PageSize = paginationSearchParameters.PageSize,
+            Specification = null,
+            SearchTerm = paginationSearchParameters.SearchTerm
+        };
+
+        var menus = await _menuRepository.GetFilteredAsync(newFilterParameters);
+
+        var totalMenus = await _menuRepository.GetCountFilteredAsync(newFilterParameters);
+        var totalPages = (int)Math.Ceiling(totalMenus / (double)paginationSearchParameters.PageSize);
+
+
+        var filterReponse = new FilterResponseDto<Menu>() {
+            CurrentPage = paginationSearchParameters.PageNumber,
             AmountOfPages = totalPages,
             AmountOfEntities = totalMenus,
             Entities = menus

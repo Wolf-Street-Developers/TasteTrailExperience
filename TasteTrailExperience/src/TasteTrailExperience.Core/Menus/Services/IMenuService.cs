@@ -1,13 +1,16 @@
 using TasteTrailData.Core.Menus.Models;
 using TasteTrailData.Core.Users.Models;
 using TasteTrailData.Infrastructure.Filters.Dtos;
+using TasteTrailExperience.Core.Filters;
 using TasteTrailExperience.Core.Menus.Dtos;
 
 namespace TasteTrailExperience.Core.Menus.Services;
 
 public interface IMenuService
 {
-    Task<FilterResponseDto<Menu>> GetMenusFilteredAsync(FilterParametersPaginationDto filterParameters, int venueId);
+    Task<FilterResponseDto<Menu>> GetMenusFilteredAsync(PaginationParametersDto filterParameters, int venueId);
+
+    Task<FilterResponseDto<Menu>> GetMenusFilteredAsync(PaginationSearchParametersDto filterParameters);
 
     Task<Menu?> GetMenuByIdAsync(int id);
 

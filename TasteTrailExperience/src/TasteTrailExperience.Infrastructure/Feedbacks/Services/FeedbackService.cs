@@ -59,12 +59,61 @@ public class FeedbackService : IFeedbackService
                 Username = user.UserName!,
                 UserId = user.Id,
                 VenueId = feedback.VenueId,
+                Likes = feedback.Likes,
             };
 
             feedbackDtos.Add(feedbackDto);
         }
 
         var totalFeedbacks = await _feedbackRepository.GetCountFilteredIdAsync(newFilterParameters, venueId);
+        var totalPages = (int)Math.Ceiling(totalFeedbacks / (double)filterParameters.PageSize);
+
+
+        var filterReponse = new FilterResponseDto<FeedbackGetDto>() {
+            CurrentPage = filterParameters.PageNumber,
+            AmountOfPages = totalPages,
+            AmountOfEntities = totalFeedbacks,
+            Entities = feedbackDtos
+        };
+
+        return filterReponse;
+    }
+
+    public async Task<FilterResponseDto<FeedbackGetDto>> GetFeedbacksFilteredAsync(FilterParametersSearchDto filterParameters)
+    {
+        var newFilterParameters = new FilterParameters<Feedback>() {
+            PageNumber = filterParameters.PageNumber,
+            PageSize = filterParameters.PageSize,
+            Specification = FeedbackFilterFactory.CreateFilter(filterParameters.Type),
+            SearchTerm = filterParameters.SearchTerm
+        };
+
+        var feedbacks = await _feedbackRepository.GetFilteredAsync(newFilterParameters);
+        var feedbackDtos = new List<FeedbackGetDto>();
+
+        foreach (var feedback in feedbacks)
+        {
+            var user = await _userManager.FindByIdAsync(feedback.UserId);
+
+            if (user is null)
+                throw new ArgumentNullException(nameof(user));
+
+            var feedbackDto = new FeedbackGetDto
+            {
+                Id = feedback.Id,
+                Text = feedback.Text,
+                Rating = (int)feedback.Rating,
+                CreationDate = feedback.CreationDate,
+                Username = user.UserName!,
+                UserId = user.Id,
+                VenueId = feedback.VenueId,
+                Likes = feedback.Likes,
+            };
+
+            feedbackDtos.Add(feedbackDto);
+        }
+
+        var totalFeedbacks = await _feedbackRepository.GetCountFilteredAsync(newFilterParameters);
         var totalPages = (int)Math.Ceiling(totalFeedbacks / (double)filterParameters.PageSize);
 
 
@@ -109,7 +158,7 @@ public class FeedbackService : IFeedbackService
 
     public async Task<int> GetFeedbacksCountAsync()
     {
-        return await _feedbackRepository.GetCountAsync();
+        return await _feedbackRepository.GetCountFilteredAsync(null);
     }
 
     public async Task<int> CreateFeedbackAsync(FeedbackCreateDto feedback, User user)

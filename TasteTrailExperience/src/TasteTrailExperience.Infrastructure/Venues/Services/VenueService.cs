@@ -52,9 +52,9 @@ public class VenueService : IVenueService
         return venue;
     }
 
-    public async Task<int> GetVenuesCountAsync()
+    public Task<int> GetVenuesCountAsync()
     {
-        return await _venueRepository.GetCountAsync();
+        return _venueRepository.GetCountFilteredAsync(null);
     }
 
     public async Task<int> CreateVenueAsync(VenueCreateDto venue, User user)

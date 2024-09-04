@@ -43,6 +43,21 @@ public class MenuItemController : ControllerBase
         }
     }
 
+    [HttpPost()]
+    public async Task<IActionResult> GetFilteredAsync(FilterParametersSearchDto filterParameters)
+    {
+        try 
+        {
+            var filterResponse = await _menuItemService.GetMenuItemsFilteredAsync(filterParameters);
+
+            return Ok(filterResponse);
+        }
+        catch (Exception ex)
+        {
+            return this.InternalServerError(ex.Message);
+        }
+    }
+
     [HttpGet]
     public async Task<IActionResult> GetByIdAsync(int id)
     {

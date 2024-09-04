@@ -39,6 +39,21 @@ public class FeedbackController : ControllerBase
         }
     }
 
+    [HttpPost()]
+    public async Task<IActionResult> GetFilteredAsync(FilterParametersSearchDto filterParameters)
+    {
+        try 
+        {
+            var filterResponse = await _feedbackService.GetFeedbacksFilteredAsync(filterParameters);
+
+            return Ok(filterResponse);
+        }
+        catch (Exception ex)
+        {
+            return this.InternalServerError(ex.Message);
+        }
+    }
+
     [HttpGet("{id}")]
     public async Task<IActionResult> GetByIdAsync(int id)
     {

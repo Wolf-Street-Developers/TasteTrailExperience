@@ -43,11 +43,6 @@ public class VenueEfCoreRepository : IVenueRepository
             .FirstOrDefaultAsync(v => v.Id == id);
     }
 
-    public Task<int> GetCountAsync()
-    {
-        return _dbContext.Venues.CountAsync();
-    }
-
     public async Task<int> GetCountFilteredAsync(FilterParameters<Venue>? parameters)
     {
         var query = _dbContext.Venues.AsQueryable();

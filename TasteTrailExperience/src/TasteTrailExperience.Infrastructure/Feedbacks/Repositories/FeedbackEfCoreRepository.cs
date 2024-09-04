@@ -29,15 +29,26 @@ public class FeedbackEfCoreRepository : IFeedbackRepository
         return await query.ToListAsync();
     }
 
-    public async Task<Feedback?> GetByIdAsync(int id)
-    {
-        return await _dbContext.Feedbacks
-            .FirstOrDefaultAsync(f => f.Id == id);
-    }
     
-    public async Task<int> GetCountAsync()
+    public async Task<List<Feedback>> GetFilteredAsync(FilterParameters<Feedback> parameters)
     {
-        return await _dbContext.Feedbacks.CountAsync();
+        IQueryable<Feedback> query = _dbContext.Set<Feedback>();
+
+        if (parameters.Specification is not null)
+            query = parameters.Specification.Apply(query); // Adding Filter
+
+        if (parameters.SearchTerm is not null)
+        {
+            var searchTerm = $"%{parameters.SearchTerm.ToLower()}%";
+
+            query = query.Where(f =>
+                f.Text != null && EF.Functions.Like(f.Text.ToLower(), searchTerm)
+            );
+        }
+
+        query = query.Skip((parameters.PageNumber - 1) * parameters.PageSize).Take(parameters.PageSize); // Applying pagination
+
+        return await query.ToListAsync();
     }
 
     public async Task<int> GetCountFilteredIdAsync(FilterParameters<Feedback>? parameters, int venueId)
@@ -52,6 +63,34 @@ public class FeedbackEfCoreRepository : IFeedbackRepository
             query = parameters.Specification.Apply(query);
 
         return await query.CountAsync();
+    }
+
+    public async Task<int> GetCountFilteredAsync(FilterParameters<Feedback>? parameters)
+    {
+        var query = _dbContext.Feedbacks.AsQueryable();
+
+        if (parameters is null)
+            return await query.CountAsync();
+
+        if (parameters.Specification != null)
+            query = parameters.Specification.Apply(query);
+
+        if (parameters.SearchTerm is not null)
+        {
+            var searchTerm = $"%{parameters.SearchTerm.ToLower()}%";
+
+            query = query.Where(f =>
+                f.Text != null && EF.Functions.Like(f.Text.ToLower(), searchTerm)
+            );
+        }
+
+        return await query.CountAsync();
+    }
+
+    public async Task<Feedback?> GetByIdAsync(int id)
+    {
+        return await _dbContext.Feedbacks
+            .FirstOrDefaultAsync(f => f.Id == id);
     }
 
     public async Task<decimal> GetAverageRatingAsync(int venueId) {
@@ -139,5 +178,4 @@ public class FeedbackEfCoreRepository : IFeedbackRepository
 
         return feedback.Id;
     }
-
 }

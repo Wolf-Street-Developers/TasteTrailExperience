@@ -15,4 +15,6 @@ public class FeedbackGetDto
     public required string UserId { get; set; }
 
     public required int VenueId { get; set; }
+
+    public int Likes { get; set; }
 }

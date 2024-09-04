@@ -27,21 +27,40 @@ public class MenuItemEfCoreRepository : IMenuItemRepository
 
         if (parameters.SearchTerm is not null)
         {
+            var searchTerm = $"%{parameters.SearchTerm.ToLower()}%";
+
             query = query.Where(mi =>
-                (mi.Name != null && mi.Name.Contains(parameters.SearchTerm, StringComparison.CurrentCultureIgnoreCase)) ||
-                (mi.Description != null && mi.Description.Contains(parameters.SearchTerm, StringComparison.CurrentCultureIgnoreCase))
+                (mi.Name != null && EF.Functions.Like(mi.Name.ToLower(), searchTerm)) ||
+                (mi.Description != null && EF.Functions.Like(mi.Description.ToLower(), searchTerm))
             );
-        }   
+        }
         
         query = query.Skip((parameters.PageNumber - 1) * parameters.PageSize).Take(parameters.PageSize);
 
         return await query.ToListAsync();
     }
 
-    public async Task<MenuItem?> GetByIdAsync(int id)
+    public async Task<List<MenuItem>> GetFilteredAsync(FilterParameters<MenuItem> parameters)
     {
-        return await _dbContext.MenuItems
-            .FirstOrDefaultAsync(mi => mi.Id == id);
+        IQueryable<MenuItem> query = _dbContext.Set<MenuItem>();
+
+        if (parameters.Specification is not null)
+            query = parameters.Specification.Apply(query);
+
+
+        if (parameters.SearchTerm is not null)
+        {
+            var searchTerm = $"%{parameters.SearchTerm.ToLower()}%";
+
+            query = query.Where(mi =>
+                (mi.Name != null && EF.Functions.Like(mi.Name.ToLower(), searchTerm)) ||
+                (mi.Description != null && EF.Functions.Like(mi.Description.ToLower(), searchTerm))
+            );
+        }  
+        
+        query = query.Skip((parameters.PageNumber - 1) * parameters.PageSize).Take(parameters.PageSize);
+
+        return await query.ToListAsync();
     }
 
     public async Task<int> GetCountFilteredIdAsync(FilterParameters<MenuItem>? parameters, int menuId)
@@ -56,6 +75,25 @@ public class MenuItemEfCoreRepository : IMenuItemRepository
             query = parameters.Specification.Apply(query);
 
         return await query.CountAsync();
+    }
+
+    public async Task<int> GetCountFilteredAsync(FilterParameters<MenuItem>? parameters)
+    {
+        var query = _dbContext.MenuItems.AsQueryable();
+
+        if (parameters is null)
+            return await query.CountAsync();
+
+        if (parameters.Specification != null)
+            query = parameters.Specification.Apply(query);
+
+        return await query.CountAsync();
+    }
+
+    public async Task<MenuItem?> GetByIdAsync(int id)
+    {
+        return await _dbContext.MenuItems
+            .FirstOrDefaultAsync(mi => mi.Id == id);
     }
 
     public async Task<int> CreateAsync(MenuItem menuItem)
@@ -140,5 +178,4 @@ public class MenuItemEfCoreRepository : IMenuItemRepository
 
         return menuItem.Id;
     }
-
 }

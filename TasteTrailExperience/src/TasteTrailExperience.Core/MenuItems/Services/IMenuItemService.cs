@@ -9,6 +9,8 @@ public interface IMenuItemService
 {
     Task<FilterResponseDto<MenuItem>> GetMenuItemsFilteredAsync(FilterParametersSearchDto filterParameters, int menuId);
 
+    Task<FilterResponseDto<MenuItem>> GetMenuItemsFilteredAsync(FilterParametersSearchDto filterParameters);
+
     Task<MenuItem?> GetMenuItemByIdAsync(int id);
 
     Task<int> CreateMenuItemAsync(MenuItemCreateDto menuItem, User user);

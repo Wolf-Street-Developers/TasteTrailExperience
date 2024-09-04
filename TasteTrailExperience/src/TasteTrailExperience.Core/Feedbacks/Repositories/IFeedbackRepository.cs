@@ -4,8 +4,9 @@ using TasteTrailExperience.Core.Common.Repositories;
 
 namespace TasteTrailExperience.Core.Feedbacks.Repositories;
 
-public interface IFeedbackRepository : IGetFilteredByIdAsync<Feedback, int>, IGetAsNoTrackingAsync<Feedback?, int>, IGetCountAsync, 
-IGetCountFilteredIdAsync<Feedback, int>, IGetByIdAsync<Feedback?, int>,
+public interface IFeedbackRepository : IGetFilteredByIdAsync<Feedback, int>, IGetFilteredAsync<Feedback>,
+IGetAsNoTrackingAsync<Feedback?, int>, IGetCountFilteredIdAsync<Feedback, int>, 
+IGetCountFilteredAsync<Feedback>, IGetByIdAsync<Feedback?, int>,
 ICreateAsync<Feedback, int>, IDeleteByIdAsync<int, int?>, IPutAsync<Feedback, int?>, 
 IIncrementLikesAsync<Feedback, int?>, IDecrementLikesAsync<Feedback, int?> 
 {

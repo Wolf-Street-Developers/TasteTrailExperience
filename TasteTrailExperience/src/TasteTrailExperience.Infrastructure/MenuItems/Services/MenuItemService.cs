@@ -23,8 +23,6 @@ public class MenuItemService : IMenuItemService
         _menuRepository = menuRepository;
     }
 
-    
-
     public async Task<FilterResponseDto<MenuItem>> GetMenuItemsFilteredAsync(FilterParametersSearchDto filterParameters, int menuId)
     {
         if (menuId <= 0)
@@ -40,6 +38,32 @@ public class MenuItemService : IMenuItemService
         var menuItems = await _menuItemRepository.GetFilteredByIdAsync(newFilterParameters, menuId);
 
         var totalMenuItems = await _menuItemRepository.GetCountFilteredIdAsync(newFilterParameters, menuId);
+        var totalPages = (int)Math.Ceiling(totalMenuItems / (double)filterParameters.PageSize);
+
+
+        var filterReponse = new FilterResponseDto<MenuItem>() {
+            CurrentPage = filterParameters.PageNumber,
+            AmountOfPages = totalPages,
+            AmountOfEntities = totalMenuItems,
+            Entities = menuItems
+        };
+
+        return filterReponse;
+    }
+
+    
+    public async Task<FilterResponseDto<MenuItem>> GetMenuItemsFilteredAsync(FilterParametersSearchDto filterParameters)
+    {
+        var newFilterParameters = new FilterParameters<MenuItem>() {
+            PageNumber = filterParameters.PageNumber,
+            PageSize = filterParameters.PageSize,
+            Specification = MenuItemFilterFactory.CreateFilter(filterParameters.Type),
+            SearchTerm = filterParameters.SearchTerm
+        };
+
+        var menuItems = await _menuItemRepository.GetFilteredAsync(newFilterParameters);
+
+        var totalMenuItems = await _menuItemRepository.GetCountFilteredAsync(newFilterParameters);
         var totalPages = (int)Math.Ceiling(totalMenuItems / (double)filterParameters.PageSize);
 
 
