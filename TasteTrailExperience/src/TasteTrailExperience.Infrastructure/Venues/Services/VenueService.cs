@@ -1,4 +1,3 @@
-using TasteTrailData.Core.Filters.Enums;
 using TasteTrailData.Core.Filters.Specifications;
 using TasteTrailData.Core.Users.Models;
 using TasteTrailData.Core.Venues.Models;
@@ -63,6 +62,8 @@ public class VenueService : IVenueService
         var newVenue = new Venue() {
             Name = venue.Name,
             Address = venue.Address,
+            Longtitude = venue.Longtitude,
+            Latitude = venue.Latitude,
             Description = venue.Description,
             Email = venue.Email,
             ContactNumber = venue.ContactNumber,
@@ -108,6 +109,8 @@ public class VenueService : IVenueService
             Id = venue.Id,
             Name = venue.Name,
             Address = venue.Address,
+            Longtitude = venue.Longtitude,
+            Latitude = venue.Latitude,
             Description = venue.Description,
             Email = venue.Email,
             ContactNumber = venue.ContactNumber,

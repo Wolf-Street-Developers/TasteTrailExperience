@@ -105,6 +105,8 @@ public class VenueEfCoreRepository : IVenueRepository
             return null;
 
         venueToUpdate.Name = venue.Name;
+        venueToUpdate.Latitude = venue.Latitude;
+        venueToUpdate.Longtitude = venue.Longtitude;
         venueToUpdate.Address = venue.Address;
         venueToUpdate.ContactNumber = venue.ContactNumber;
         venueToUpdate.Email = venue.Email;

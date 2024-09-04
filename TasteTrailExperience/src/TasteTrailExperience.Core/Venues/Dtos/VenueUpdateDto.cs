@@ -15,4 +15,8 @@ public class VenueUpdateDto
     public string? ContactNumber { get; set; }
 
     public float AveragePrice { get; set; }
+
+    public double Longtitude { get; set; }
+
+    public double Latitude { get; set; }
 }
