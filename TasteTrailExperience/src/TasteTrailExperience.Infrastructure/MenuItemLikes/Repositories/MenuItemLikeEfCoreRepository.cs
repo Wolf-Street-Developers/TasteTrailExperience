@@ -49,4 +49,18 @@ public class MenuItemLikeEfCoreRepository : IMenuItemLikeRepository
             .AsNoTracking()
             .FirstOrDefaultAsync(f => f.Id == id);
     }
+
+    public async Task<List<int>> GetLikedMenuItemIds(string userId)
+    {
+        return await _dbContext.MenuItemLikes
+                             .Where(ml => ml.UserId == userId)
+                             .Select(ml => ml.MenuItemId)
+                             .ToListAsync();
+    }
+
+    public async Task<bool> Exists(int menuItemId, string userId)
+    {
+        return await _dbContext.MenuItemLikes
+                             .AnyAsync(ml => ml.UserId == userId && ml.MenuItemId == menuItemId);
+    }
 }

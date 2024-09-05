@@ -29,7 +29,8 @@ public class FeedbackController : ControllerBase
     {
         try 
         {
-            var filterResponse = await _feedbackService.GetFeedbacksFilteredAsync(filterParameters, venueId);
+            var user = await _userManager.GetUserAsync(User);
+            var filterResponse = await _feedbackService.GetFeedbacksFilteredAsync(filterParameters, venueId, user);
 
             return Ok(filterResponse);
         }
@@ -44,7 +45,8 @@ public class FeedbackController : ControllerBase
     {
         try 
         {
-            var filterResponse = await _feedbackService.GetFeedbacksFilteredAsync(filterParameters);
+            var user = await _userManager.GetUserAsync(User);
+            var filterResponse = await _feedbackService.GetFeedbacksFilteredAsync(filterParameters, user);
 
             return Ok(filterResponse);
         }

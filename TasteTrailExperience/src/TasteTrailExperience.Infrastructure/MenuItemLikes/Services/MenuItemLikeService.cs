@@ -28,6 +28,11 @@ public class MenuItemLikeService : IMenuItemLikeService
             UserId = user.Id,
         };
 
+        var exists = await _menuItemLikeRepository.Exists(menuItemLikeToCreate.MenuItemId, menuItemLikeToCreate.UserId);
+
+        if (exists)
+            throw new InvalidOperationException($"You already liked this menuItem.");
+
         var id = await _menuItemLikeRepository.CreateAsync(menuItemLikeToCreate);
 
         var menuItemId = await _menuItemRepository.IncrementLikesAsync(new MenuItem()

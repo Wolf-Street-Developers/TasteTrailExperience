@@ -3,6 +3,7 @@ using TasteTrailData.Core.MenuItems.Models;
 using TasteTrailData.Core.Users.Models;
 using TasteTrailData.Infrastructure.Filters.Dtos;
 using TasteTrailExperience.Core.Common.Exceptions;
+using TasteTrailExperience.Core.MenuItemLikes.Repositories;
 using TasteTrailExperience.Core.MenuItems.Dtos;
 using TasteTrailExperience.Core.MenuItems.Repositories;
 using TasteTrailExperience.Core.MenuItems.Services;
@@ -17,13 +18,16 @@ public class MenuItemService : IMenuItemService
 
     private readonly IMenuRepository _menuRepository;
 
-    public MenuItemService(IMenuItemRepository menuItemRepository, IMenuRepository menuRepository)
+    private readonly IMenuItemLikeRepository _menuItemLikeRepository;
+
+    public MenuItemService(IMenuItemRepository menuItemRepository, IMenuRepository menuRepository, IMenuItemLikeRepository menuItemLikeRepository)
     {
         _menuItemRepository = menuItemRepository;
         _menuRepository = menuRepository;
+        _menuItemLikeRepository = menuItemLikeRepository;
     }
 
-    public async Task<FilterResponseDto<MenuItem>> GetMenuItemsFilteredAsync(FilterParametersSearchDto filterParameters, int menuId)
+    public async Task<FilterResponseDto<MenuItemGetDto>> GetMenuItemsFilteredAsync(FilterParametersSearchDto filterParameters, int menuId, User? authenticatedUser)
     {
         if (menuId <= 0)
             throw new ArgumentException($"Invalid Venue ID: {menuId}.");
@@ -36,23 +40,49 @@ public class MenuItemService : IMenuItemService
         };
 
         var menuItems = await _menuItemRepository.GetFilteredByIdAsync(newFilterParameters, menuId);
+        var menuItemDtos = new List<MenuItemGetDto>();
+
+        List<int>? likedMenuItemIds = null;
+
+        if (authenticatedUser is not null)
+            likedMenuItemIds = await _menuItemLikeRepository.GetLikedMenuItemIds(authenticatedUser.Id);
+
+        foreach (var menuItem in menuItems)
+        {
+            var isLiked = likedMenuItemIds is not null && likedMenuItemIds.Any(id => id == menuItem.Id);
+
+            var menuItemDto = new MenuItemGetDto
+            {
+                Id = menuItem.Id,
+                Name = menuItem.Name,
+                Description = menuItem.Description,
+                ImageUrlPath = menuItem.ImageUrlPath,
+                Price = menuItem.Price!,
+                Likes = menuItem.Likes,
+                MenuId = menuItem.MenuId,
+                UserId = menuItem.UserId,
+                IsLiked = isLiked
+            };
+
+            menuItemDtos.Add(menuItemDto);
+        }
 
         var totalMenuItems = await _menuItemRepository.GetCountFilteredIdAsync(newFilterParameters, menuId);
         var totalPages = (int)Math.Ceiling(totalMenuItems / (double)filterParameters.PageSize);
 
 
-        var filterReponse = new FilterResponseDto<MenuItem>() {
+        var filterReponse = new FilterResponseDto<MenuItemGetDto>() {
             CurrentPage = filterParameters.PageNumber,
             AmountOfPages = totalPages,
             AmountOfEntities = totalMenuItems,
-            Entities = menuItems
+            Entities = menuItemDtos
         };
 
         return filterReponse;
     }
 
     
-    public async Task<FilterResponseDto<MenuItem>> GetMenuItemsFilteredAsync(FilterParametersSearchDto filterParameters)
+    public async Task<FilterResponseDto<MenuItemGetDto>> GetMenuItemsFilteredAsync(FilterParametersSearchDto filterParameters, User? authenticatedUser)
     {
         var newFilterParameters = new FilterParameters<MenuItem>() {
             PageNumber = filterParameters.PageNumber,
@@ -62,16 +92,42 @@ public class MenuItemService : IMenuItemService
         };
 
         var menuItems = await _menuItemRepository.GetFilteredAsync(newFilterParameters);
+        var menuItemDtos = new List<MenuItemGetDto>();
+
+        List<int>? likedMenuItemIds = null;
+
+        if (authenticatedUser is not null)
+            likedMenuItemIds = await _menuItemLikeRepository.GetLikedMenuItemIds(authenticatedUser.Id);
+
+        foreach (var menuItem in menuItems)
+        {
+            var isLiked = likedMenuItemIds is not null && likedMenuItemIds.Any(id => id == menuItem.Id);
+
+            var menuItemDto = new MenuItemGetDto
+            {
+                Id = menuItem.Id,
+                Name = menuItem.Name,
+                Description = menuItem.Description,
+                ImageUrlPath = menuItem.ImageUrlPath,
+                Price = menuItem.Price!,
+                Likes = menuItem.Likes,
+                MenuId = menuItem.MenuId,
+                UserId = menuItem.UserId,
+                IsLiked = isLiked
+            };
+
+            menuItemDtos.Add(menuItemDto);
+        }
 
         var totalMenuItems = await _menuItemRepository.GetCountFilteredAsync(newFilterParameters);
         var totalPages = (int)Math.Ceiling(totalMenuItems / (double)filterParameters.PageSize);
 
 
-        var filterReponse = new FilterResponseDto<MenuItem>() {
+        var filterReponse = new FilterResponseDto<MenuItemGetDto>() {
             CurrentPage = filterParameters.PageNumber,
             AmountOfPages = totalPages,
             AmountOfEntities = totalMenuItems,
-            Entities = menuItems
+            Entities = menuItemDtos
         };
 
         return filterReponse;

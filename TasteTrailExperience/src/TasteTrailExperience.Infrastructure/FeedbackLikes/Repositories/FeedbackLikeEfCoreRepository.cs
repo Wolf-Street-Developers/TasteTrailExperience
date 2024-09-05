@@ -49,4 +49,18 @@ public class FeedbackLikeEfCoreRepository : IFeedbackLikeRepository
             .AsNoTracking()
             .FirstOrDefaultAsync(f => f.Id == id);
     }
+
+    public async Task<List<int>> GetLikedFeedbacksIds(string userId)
+    {
+        return await _dbContext.FeedbackLikes
+                             .Where(fl => fl.UserId == userId)
+                             .Select(fl => fl.FeedbackId)
+                             .ToListAsync();
+    }
+
+    public async Task<bool> Exists(int feedbackId, string userId)
+    {
+        return await _dbContext.FeedbackLikes
+                             .AnyAsync(fl => fl.UserId == userId && fl.FeedbackId == feedbackId);
+    }
 }

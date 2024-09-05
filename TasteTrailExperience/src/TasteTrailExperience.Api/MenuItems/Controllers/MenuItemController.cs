@@ -33,7 +33,8 @@ public class MenuItemController : ControllerBase
     {
         try 
         {
-            var filterResponse = await _menuItemService.GetMenuItemsFilteredAsync(filterParameters, menuId);
+            var user = await _userManager.GetUserAsync(User);
+            var filterResponse = await _menuItemService.GetMenuItemsFilteredAsync(filterParameters, menuId, user);
 
             return Ok(filterResponse);
         }
@@ -48,7 +49,8 @@ public class MenuItemController : ControllerBase
     {
         try 
         {
-            var filterResponse = await _menuItemService.GetMenuItemsFilteredAsync(filterParameters);
+            var user = await _userManager.GetUserAsync(User);
+            var filterResponse = await _menuItemService.GetMenuItemsFilteredAsync(filterParameters, user);
 
             return Ok(filterResponse);
         }

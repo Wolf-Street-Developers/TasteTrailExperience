@@ -33,10 +33,10 @@ public static class RegisterDependencyInjectionMethod
     {
         serviceCollection.AddTransient<IVenueRepository, VenueEfCoreRepository>();
         serviceCollection.AddTransient<IMenuRepository, MenuEfCoreRepository>();
-        serviceCollection.AddTransient<IMenuItemRepository, MenuItemEfCoreRepository>();
-        serviceCollection.AddTransient<IFeedbackRepository, FeedbackEfCoreRepository>();
         serviceCollection.AddTransient<IFeedbackLikeRepository, FeedbackLikeEfCoreRepository>();
         serviceCollection.AddTransient<IMenuItemLikeRepository, MenuItemLikeEfCoreRepository>();
+        serviceCollection.AddTransient<IMenuItemRepository, MenuItemEfCoreRepository>();
+        serviceCollection.AddTransient<IFeedbackRepository, FeedbackEfCoreRepository>();
 
         serviceCollection.AddTransient<IVenueService, VenueService>();
         serviceCollection.AddTransient<IMenuService, MenuService>();

@@ -6,9 +6,9 @@ namespace TasteTrailExperience.Core.Feedbacks.Services;
 
 public interface IFeedbackService
 {
-    Task<FilterResponseDto<FeedbackGetDto>> GetFeedbacksFilteredAsync(FilterParametersDto filterParameters, int venueId);
+    Task<FilterResponseDto<FeedbackGetDto>> GetFeedbacksFilteredAsync(FilterParametersDto filterParameters, int venueId, User? authenticatedUser);
 
-    Task<FilterResponseDto<FeedbackGetDto>> GetFeedbacksFilteredAsync(FilterParametersSearchDto filterParameters);
+    Task<FilterResponseDto<FeedbackGetDto>> GetFeedbacksFilteredAsync(FilterParametersSearchDto filterParameters, User? authenticatedUser);
 
     Task<FeedbackGetDto?> GetFeedbackByIdAsync(int id);
 

@@ -17,4 +17,6 @@ public class FeedbackGetDto
     public required int VenueId { get; set; }
 
     public int Likes { get; set; }
+
+    public bool IsLiked { get; set; }
 }

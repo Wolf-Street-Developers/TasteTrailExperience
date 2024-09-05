@@ -28,6 +28,11 @@ public class FeedbackLikeService : IFeedbackLikeService
             UserId = user.Id,
         };
 
+        var exists = await _feedbackLikeRepository.Exists(feedbackLikeToCreate.FeedbackId, feedbackLikeToCreate.UserId);
+
+        if (exists)
+            throw new InvalidOperationException($"You already liked this feedback.");
+
         var id = await _feedbackLikeRepository.CreateAsync(feedbackLikeToCreate);
 
         var feedbackId = await _feedbackRepository.IncrementLikesAsync(new Feedback()

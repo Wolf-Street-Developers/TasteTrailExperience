@@ -4,10 +4,12 @@ using TasteTrailData.Core.Filters.Specifications;
 using TasteTrailData.Core.Users.Models;
 using TasteTrailData.Infrastructure.Filters.Dtos;
 using TasteTrailExperience.Core.Common.Exceptions;
+using TasteTrailExperience.Core.FeedbackLikes.Repositories;
 using TasteTrailExperience.Core.Feedbacks.Dtos;
 using TasteTrailExperience.Core.Feedbacks.Repositories;
 using TasteTrailExperience.Core.Feedbacks.Services;
 using TasteTrailExperience.Core.Venues.Repositories;
+using TasteTrailExperience.Infrastructure.FeedbackLikes.Repositories;
 using TasteTrailExperience.Infrastructure.Feedbacks.Factories;
 
 namespace TasteTrailExperience.Infrastructure.Feedbacks.Services;
@@ -20,15 +22,19 @@ public class FeedbackService : IFeedbackService
 
     private readonly UserManager<User> _userManager;
 
+    private readonly IFeedbackLikeRepository _feedbackLikeRepository;
+
+
     public FeedbackService(IFeedbackRepository feedbackRepository,  IVenueRepository venueRepository,
-        UserManager<User> userManager)
+        UserManager<User> userManager, IFeedbackLikeRepository feedbackLikeRepository)
     {
         _feedbackRepository = feedbackRepository;
         _userManager = userManager;
         _venueRepository = venueRepository;
+        _feedbackLikeRepository = feedbackLikeRepository;
     }
 
-    public async Task<FilterResponseDto<FeedbackGetDto>> GetFeedbacksFilteredAsync(FilterParametersDto filterParameters, int venueId)
+    public async Task<FilterResponseDto<FeedbackGetDto>> GetFeedbacksFilteredAsync(FilterParametersDto filterParameters, int venueId, User? authenticatedUser)
     {
         if (venueId <= 0)
             throw new ArgumentException($"Invalid Venue ID: {venueId}.");
@@ -43,9 +49,15 @@ public class FeedbackService : IFeedbackService
         var feedbacks = await _feedbackRepository.GetFilteredByIdAsync(newFilterParameters, venueId);
         var feedbackDtos = new List<FeedbackGetDto>();
 
+        List<int>? likedFeedbackIds = null;
+
+        if (authenticatedUser is not null)
+            likedFeedbackIds = await _feedbackLikeRepository.GetLikedFeedbacksIds(authenticatedUser.Id);
+
         foreach (var feedback in feedbacks)
         {
             var user = await _userManager.FindByIdAsync(feedback.UserId);
+            var isLiked = likedFeedbackIds is not null && likedFeedbackIds.Any(id => id == feedback.Id);
 
             if (user is null)
                 throw new ArgumentNullException(nameof(user));
@@ -60,6 +72,7 @@ public class FeedbackService : IFeedbackService
                 UserId = user.Id,
                 VenueId = feedback.VenueId,
                 Likes = feedback.Likes,
+                IsLiked = isLiked
             };
 
             feedbackDtos.Add(feedbackDto);
@@ -79,7 +92,7 @@ public class FeedbackService : IFeedbackService
         return filterReponse;
     }
 
-    public async Task<FilterResponseDto<FeedbackGetDto>> GetFeedbacksFilteredAsync(FilterParametersSearchDto filterParameters)
+    public async Task<FilterResponseDto<FeedbackGetDto>> GetFeedbacksFilteredAsync(FilterParametersSearchDto filterParameters, User? authenticatedUser)
     {
         var newFilterParameters = new FilterParameters<Feedback>() {
             PageNumber = filterParameters.PageNumber,
@@ -91,9 +104,15 @@ public class FeedbackService : IFeedbackService
         var feedbacks = await _feedbackRepository.GetFilteredAsync(newFilterParameters);
         var feedbackDtos = new List<FeedbackGetDto>();
 
+        List<int>? likedFeedbackIds = null;
+
+        if (authenticatedUser is not null)
+            likedFeedbackIds = await _feedbackLikeRepository.GetLikedFeedbacksIds(authenticatedUser.Id);
+
         foreach (var feedback in feedbacks)
         {
             var user = await _userManager.FindByIdAsync(feedback.UserId);
+            var isLiked = likedFeedbackIds is not null && likedFeedbackIds.Any(id => id == feedback.Id);
 
             if (user is null)
                 throw new ArgumentNullException(nameof(user));
@@ -108,6 +127,7 @@ public class FeedbackService : IFeedbackService
                 UserId = user.Id,
                 VenueId = feedback.VenueId,
                 Likes = feedback.Likes,
+                IsLiked = isLiked
             };
 
             feedbackDtos.Add(feedbackDto);
