@@ -1,6 +1,5 @@
 using TasteTrailData.Core.Common.Repositories.Base;
 using TasteTrailData.Core.Venues.Models;
-using TasteTrailExperience.Core.Common.Repositories;
 
 namespace TasteTrailExperience.Core.Venues.Repositories;
 

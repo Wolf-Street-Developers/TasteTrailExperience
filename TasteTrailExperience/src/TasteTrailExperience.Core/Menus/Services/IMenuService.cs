@@ -1,7 +1,6 @@
 using TasteTrailData.Core.Menus.Models;
 using TasteTrailData.Core.Users.Models;
 using TasteTrailData.Infrastructure.Filters.Dtos;
-using TasteTrailExperience.Core.Filters;
 using TasteTrailExperience.Core.Menus.Dtos;
 
 namespace TasteTrailExperience.Core.Menus.Services;
