@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Authorization.Infrastructure;
 using Microsoft.AspNetCore.Identity;
 using TasteTrailData.Core.Feedbacks.Models;
 using TasteTrailData.Core.Filters.Specifications;
@@ -8,8 +9,8 @@ using TasteTrailExperience.Core.FeedbackLikes.Repositories;
 using TasteTrailExperience.Core.Feedbacks.Dtos;
 using TasteTrailExperience.Core.Feedbacks.Repositories;
 using TasteTrailExperience.Core.Feedbacks.Services;
+using TasteTrailExperience.Core.Roles;
 using TasteTrailExperience.Core.Venues.Repositories;
-using TasteTrailExperience.Infrastructure.FeedbackLikes.Repositories;
 using TasteTrailExperience.Infrastructure.Feedbacks.Factories;
 
 namespace TasteTrailExperience.Infrastructure.Feedbacks.Services;
@@ -206,12 +207,14 @@ public class FeedbackService : IFeedbackService
         if (id <= 0)
             throw new ArgumentException($"Invalid ID value: {id}.");
 
-        var feedbackToUpdate = await _feedbackRepository.GetAsNoTrackingAsync(id);
+        var feedback = await _feedbackRepository.GetAsNoTrackingAsync(id);
 
-        if (feedbackToUpdate is null)
+        if (feedback is null)
             return null;
 
-        if (feedbackToUpdate.UserId != user.Id)
+        var isAdmin = await _userManager.IsInRoleAsync(user, UserRoles.Admin.ToString());
+
+        if (!isAdmin && feedback.UserId != user.Id)
             throw new ForbiddenAccessException();
 
         var feedbackId = await _feedbackRepository.DeleteByIdAsync(id);
@@ -227,7 +230,9 @@ public class FeedbackService : IFeedbackService
         if (feedbackToUpdate is null)
             return null;
 
-        if (feedbackToUpdate.UserId != user.Id)
+        var isAdmin = await _userManager.IsInRoleAsync(user, UserRoles.Admin.ToString());
+
+        if (!isAdmin && feedbackToUpdate.UserId != user.Id)
             throw new ForbiddenAccessException();
 
         var venue = await _venueRepository.GetByIdAsync(feedbackToUpdate.VenueId);
@@ -255,7 +260,6 @@ public class FeedbackService : IFeedbackService
 
         if (venue is null)
             throw new ArgumentNullException(nameof(venueId));
-
 
         var averageRating = await _feedbackRepository.GetAverageRatingAsync(venue.Id);
         venue.Rating = Math.Round(averageRating, 2);

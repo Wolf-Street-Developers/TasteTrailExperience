@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Identity;
 using TasteTrailData.Core.Filters.Specifications;
 using TasteTrailData.Core.Menus.Models;
 using TasteTrailData.Core.Users.Models;
@@ -6,6 +7,7 @@ using TasteTrailExperience.Core.Common.Exceptions;
 using TasteTrailExperience.Core.Menus.Dtos;
 using TasteTrailExperience.Core.Menus.Repositories;
 using TasteTrailExperience.Core.Menus.Services;
+using TasteTrailExperience.Core.Roles;
 using TasteTrailExperience.Core.Venues.Repositories;
 
 namespace TasteTrailExperience.Infrastructure.Menus.Services;
@@ -16,10 +18,13 @@ public class MenuService : IMenuService
 
     private readonly IVenueRepository _venueRepository;
 
-    public MenuService(IMenuRepository menuRepository, IVenueRepository venueRepository)
+    private readonly UserManager<User> _userManager;
+
+    public MenuService(IMenuRepository menuRepository, IVenueRepository venueRepository, UserManager<User> userManager)
     {
         _menuRepository = menuRepository;
         _venueRepository = venueRepository;
+        _userManager = userManager;
     }
 
     public async Task<FilterResponseDto<Menu>> GetMenusFilteredAsync(PaginationParametersDto paginationParameters, int venueId)
@@ -112,7 +117,9 @@ public class MenuService : IMenuService
         if (menu is null)
             return null;
 
-        if (menu.UserId != user.Id)
+        var isAdmin = await _userManager.IsInRoleAsync(user, UserRoles.Admin.ToString());
+
+        if (!isAdmin && menu.UserId != user.Id)
             throw new ForbiddenAccessException();
 
         var menuId = await _menuRepository.DeleteByIdAsync(id);
@@ -127,7 +134,9 @@ public class MenuService : IMenuService
         if (menuToUpdate is null)
             return null;
 
-        if (menuToUpdate.UserId != user.Id)
+        var isAdmin = await _userManager.IsInRoleAsync(user, UserRoles.Admin.ToString());
+
+        if (!isAdmin && menuToUpdate.UserId != user.Id)
             throw new ForbiddenAccessException();
 
         var updatedMenu = new Menu() 

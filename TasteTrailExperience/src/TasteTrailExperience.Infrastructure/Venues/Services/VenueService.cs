@@ -1,8 +1,10 @@
+using Microsoft.AspNetCore.Identity;
 using TasteTrailData.Core.Filters.Specifications;
 using TasteTrailData.Core.Users.Models;
 using TasteTrailData.Core.Venues.Models;
 using TasteTrailData.Infrastructure.Filters.Dtos;
 using TasteTrailExperience.Core.Common.Exceptions;
+using TasteTrailExperience.Core.Roles;
 using TasteTrailExperience.Core.Venues.Dtos;
 using TasteTrailExperience.Core.Venues.Repositories;
 using TasteTrailExperience.Core.Venues.Services;
@@ -14,9 +16,12 @@ public class VenueService : IVenueService
 {
     private readonly IVenueRepository _venueRepository;
 
-    public VenueService(IVenueRepository venueRepository)
+    private readonly UserManager<User> _userManager;
+
+    public VenueService(IVenueRepository venueRepository, UserManager<User> userManager)
     {
         _venueRepository = venueRepository;
+        _userManager = userManager;
     }
 
     public async Task<FilterResponseDto<Venue>> GetVenuesFilteredAsync(FilterParametersSearchDto filterParameters)
@@ -87,8 +92,11 @@ public class VenueService : IVenueService
         if (venue is null)
             return null;
 
-        if (venue.UserId != user.Id) 
+        var isAdmin = await _userManager.IsInRoleAsync(user, UserRoles.Admin.ToString());
+
+        if (!isAdmin && venue.UserId != user.Id)
             throw new ForbiddenAccessException();
+
 
         var venueId = await _venueRepository.DeleteByIdAsync(id);
 
@@ -102,7 +110,9 @@ public class VenueService : IVenueService
         if (venueToUpdate is null)
             return null;
 
-        if (venueToUpdate.UserId != user.Id)
+        var isAdmin = await _userManager.IsInRoleAsync(user, UserRoles.Admin.ToString());
+
+        if (!isAdmin && venueToUpdate.UserId != user.Id)
             throw new ForbiddenAccessException();
 
         var updatedVenue = new Venue() {

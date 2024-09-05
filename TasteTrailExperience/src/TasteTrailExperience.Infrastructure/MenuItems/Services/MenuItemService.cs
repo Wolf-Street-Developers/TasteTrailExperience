@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Identity;
 using TasteTrailData.Core.Filters.Specifications;
 using TasteTrailData.Core.MenuItems.Models;
 using TasteTrailData.Core.Users.Models;
@@ -8,6 +9,7 @@ using TasteTrailExperience.Core.MenuItems.Dtos;
 using TasteTrailExperience.Core.MenuItems.Repositories;
 using TasteTrailExperience.Core.MenuItems.Services;
 using TasteTrailExperience.Core.Menus.Repositories;
+using TasteTrailExperience.Core.Roles;
 using TasteTrailExperience.Infrastructure.MenuItems.Factories;
 
 namespace TasteTrailExperience.Infrastructure.MenuItems.Services;
@@ -20,11 +22,14 @@ public class MenuItemService : IMenuItemService
 
     private readonly IMenuItemLikeRepository _menuItemLikeRepository;
 
-    public MenuItemService(IMenuItemRepository menuItemRepository, IMenuRepository menuRepository, IMenuItemLikeRepository menuItemLikeRepository)
+    private readonly UserManager<User> _userManager;
+
+    public MenuItemService(IMenuItemRepository menuItemRepository, IMenuRepository menuRepository, IMenuItemLikeRepository menuItemLikeRepository, UserManager<User> userManager)
     {
         _menuItemRepository = menuItemRepository;
         _menuRepository = menuRepository;
         _menuItemLikeRepository = menuItemLikeRepository;
+        _userManager = userManager;
     }
 
     public async Task<FilterResponseDto<MenuItemGetDto>> GetMenuItemsFilteredAsync(FilterParametersSearchDto filterParameters, int menuId, User? authenticatedUser)
@@ -171,8 +176,11 @@ public class MenuItemService : IMenuItemService
         if (menuItem is null)
             return null;
 
-        if (menuItem.UserId != user.Id) 
+        var isAdmin = await _userManager.IsInRoleAsync(user, UserRoles.Admin.ToString());
+
+        if (!isAdmin && menuItem.UserId != user.Id)
             throw new ForbiddenAccessException();
+
 
         var menuItemId = await _menuItemRepository.DeleteByIdAsync(id);
 
@@ -186,7 +194,9 @@ public class MenuItemService : IMenuItemService
         if (menuItemToUpdate is null)
             return null;
 
-        if (menuItemToUpdate.UserId != user.Id)
+        var isAdmin = await _userManager.IsInRoleAsync(user, UserRoles.Admin.ToString());
+
+        if (!isAdmin && menuItemToUpdate.UserId != user.Id)
             throw new ForbiddenAccessException();
 
         var updatedMenuItem = new MenuItem() {
