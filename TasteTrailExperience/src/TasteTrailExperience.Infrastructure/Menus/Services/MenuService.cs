@@ -95,6 +95,9 @@ public class MenuService : IMenuService
         var venue = await _venueRepository.GetByIdAsync(menu.VenueId) ?? 
             throw new ArgumentException($"Venue by ID: {menu.VenueId} not found.");
 
+        if (venue.UserId != user.Id)
+            throw new ForbiddenAccessException();
+
         var newMenu = new Menu() {
             Name = menu.Name,
             Description = menu.Description,
@@ -134,9 +137,7 @@ public class MenuService : IMenuService
         if (menuToUpdate is null)
             return null;
 
-        var isAdmin = await _userManager.IsInRoleAsync(user, UserRoles.Admin.ToString());
-
-        if (!isAdmin && menuToUpdate.UserId != user.Id)
+        if (menuToUpdate.UserId != user.Id)
             throw new ForbiddenAccessException();
 
         var updatedMenu = new Menu() 

@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using TasteTrailData.Api.Common.Extensions.Controllers;
+using TasteTrailData.Core.Roles.Enums;
 using TasteTrailData.Core.Users.Models;
 using TasteTrailData.Infrastructure.Filters.Dtos;
 using TasteTrailExperience.Core.Common.Exceptions;
@@ -44,7 +45,7 @@ public class MenuItemController : ControllerBase
         }
     }
 
-    [HttpPost()]
+    [HttpPost]
     public async Task<IActionResult> GetFilteredAsync(FilterParametersSearchDto filterParameters)
     {
         try 
@@ -79,7 +80,7 @@ public class MenuItemController : ControllerBase
     }
 
     [HttpPost]
-    [Authorize]
+    [Authorize(Roles = $"{nameof(UserRoles.Admin)},{nameof(UserRoles.Owner)}")]
     public async Task<IActionResult> CreateAsync([FromForm] MenuItemCreateDto menu, IFormFile? logo)
     {
         try
@@ -106,7 +107,7 @@ public class MenuItemController : ControllerBase
     }
 
     [HttpDelete]
-    [Authorize]
+    [Authorize(Roles = $"{nameof(UserRoles.Admin)},{nameof(UserRoles.Owner)}")]
     public async Task<IActionResult> DeleteByIdAsync(int id)
     {
         try
@@ -133,7 +134,7 @@ public class MenuItemController : ControllerBase
     }
 
     [HttpPut]
-    [Authorize]
+    [Authorize(Roles = $"{nameof(UserRoles.Admin)},{nameof(UserRoles.Owner)}")]
     public async Task<IActionResult> UpdateAsync([FromForm] MenuItemUpdateDto venue, IFormFile? logo)
     {
         try

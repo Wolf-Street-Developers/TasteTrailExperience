@@ -230,9 +230,7 @@ public class FeedbackService : IFeedbackService
         if (feedbackToUpdate is null)
             return null;
 
-        var isAdmin = await _userManager.IsInRoleAsync(user, UserRoles.Admin.ToString());
-
-        if (!isAdmin && feedbackToUpdate.UserId != user.Id)
+        if (feedbackToUpdate.UserId != user.Id)
             throw new ForbiddenAccessException();
 
         var venue = await _venueRepository.GetByIdAsync(feedbackToUpdate.VenueId);

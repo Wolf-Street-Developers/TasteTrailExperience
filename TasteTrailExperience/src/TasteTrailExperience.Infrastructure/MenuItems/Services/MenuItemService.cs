@@ -153,6 +153,9 @@ public class MenuItemService : IMenuItemService
         var menu = await _menuRepository.GetByIdAsync(menuItem.MenuId) ?? 
             throw new ArgumentException($"Menu by ID: {menuItem.MenuId} not found.");
 
+        if (menu.UserId != user.Id)
+            throw new ForbiddenAccessException();
+
         var newMenuItem = new MenuItem() {
             Name = menuItem.Name,
             Description = menuItem.Description,
@@ -194,9 +197,7 @@ public class MenuItemService : IMenuItemService
         if (menuItemToUpdate is null)
             return null;
 
-        var isAdmin = await _userManager.IsInRoleAsync(user, UserRoles.Admin.ToString());
-
-        if (!isAdmin && menuItemToUpdate.UserId != user.Id)
+        if (menuItemToUpdate.UserId != user.Id)
             throw new ForbiddenAccessException();
 
         var updatedMenuItem = new MenuItem() {

@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using TasteTrailData.Api.Common.Extensions.Controllers;
+using TasteTrailData.Core.Roles.Enums;
 using TasteTrailData.Core.Users.Models;
 using TasteTrailData.Infrastructure.Filters.Dtos;
 using TasteTrailExperience.Core.Common.Exceptions;
@@ -77,7 +78,7 @@ public class VenueController : Controller
     }
 
     [HttpPost]
-    [Authorize]
+    [Authorize(Roles = $"{nameof(UserRoles.Admin)},{nameof(UserRoles.Owner)}")]
     public async Task<IActionResult> CreateAsync([FromForm] VenueCreateDto venue, IFormFile? logo)
     {
         try
@@ -104,7 +105,7 @@ public class VenueController : Controller
     }
 
     [HttpDelete]
-    [Authorize]
+    [Authorize(Roles = $"{nameof(UserRoles.Admin)},{nameof(UserRoles.Owner)}")]
     public async Task<IActionResult> DeleteByIdAsync(int id)
     {
         try
@@ -131,7 +132,7 @@ public class VenueController : Controller
     }
 
     [HttpPut]
-    [Authorize]
+    [Authorize(Roles = $"{nameof(UserRoles.Admin)},{nameof(UserRoles.Owner)}")]
     public async Task<IActionResult> UpdateAsync([FromForm] VenueUpdateDto venue, IFormFile? logo)
     {
         try
