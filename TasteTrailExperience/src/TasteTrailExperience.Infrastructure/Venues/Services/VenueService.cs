@@ -1,10 +1,10 @@
 using Microsoft.AspNetCore.Identity;
 using TasteTrailData.Core.Filters.Specifications;
+using TasteTrailData.Core.Roles.Enums;
 using TasteTrailData.Core.Users.Models;
 using TasteTrailData.Core.Venues.Models;
 using TasteTrailData.Infrastructure.Filters.Dtos;
 using TasteTrailExperience.Core.Common.Exceptions;
-using TasteTrailExperience.Core.Roles;
 using TasteTrailExperience.Core.Venues.Dtos;
 using TasteTrailExperience.Core.Venues.Repositories;
 using TasteTrailExperience.Core.Venues.Services;

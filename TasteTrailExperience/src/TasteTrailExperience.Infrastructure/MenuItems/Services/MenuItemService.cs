@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Identity;
 using TasteTrailData.Core.Filters.Specifications;
 using TasteTrailData.Core.MenuItems.Models;
+using TasteTrailData.Core.Roles.Enums;
 using TasteTrailData.Core.Users.Models;
 using TasteTrailData.Infrastructure.Filters.Dtos;
 using TasteTrailExperience.Core.Common.Exceptions;
@@ -9,7 +10,6 @@ using TasteTrailExperience.Core.MenuItems.Dtos;
 using TasteTrailExperience.Core.MenuItems.Repositories;
 using TasteTrailExperience.Core.MenuItems.Services;
 using TasteTrailExperience.Core.Menus.Repositories;
-using TasteTrailExperience.Core.Roles;
 using TasteTrailExperience.Infrastructure.MenuItems.Factories;
 
 namespace TasteTrailExperience.Infrastructure.MenuItems.Services;

@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Authorization.Infrastructure;
 using Microsoft.AspNetCore.Identity;
 using TasteTrailData.Core.Feedbacks.Models;
 using TasteTrailData.Core.Filters.Specifications;
+using TasteTrailData.Core.Roles.Enums;
 using TasteTrailData.Core.Users.Models;
 using TasteTrailData.Infrastructure.Filters.Dtos;
 using TasteTrailExperience.Core.Common.Exceptions;
@@ -9,7 +10,6 @@ using TasteTrailExperience.Core.FeedbackLikes.Repositories;
 using TasteTrailExperience.Core.Feedbacks.Dtos;
 using TasteTrailExperience.Core.Feedbacks.Repositories;
 using TasteTrailExperience.Core.Feedbacks.Services;
-using TasteTrailExperience.Core.Roles;
 using TasteTrailExperience.Core.Venues.Repositories;
 using TasteTrailExperience.Infrastructure.Feedbacks.Factories;
 
