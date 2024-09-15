@@ -103,6 +103,28 @@ public class MenuController : ControllerBase
         }
     }
 
+    [HttpPost]
+    [Authorize(Roles = $"{nameof(UserRoles.Admin)},{nameof(UserRoles.Owner)}")]
+    public async Task<IActionResult> SetImageAsync(int menuId, IFormFile image)
+    {
+        try
+        {   
+            return Ok();
+        }
+        catch (ArgumentException ex)
+        {
+            return BadRequest(ex.Message);
+        }
+        catch (ForbiddenAccessException)
+        {
+            return Forbid();
+        }
+        catch (Exception ex)
+        {
+            return this.InternalServerError(ex.Message);
+        }
+    }
+
     [HttpDelete]
     [Authorize(Roles = $"{nameof(UserRoles.Admin)},{nameof(UserRoles.Owner)}")]
     public async Task<IActionResult> DeleteByIdAsync(int id)
